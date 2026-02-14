@@ -30,16 +30,16 @@ export default function Modal({
     <div
       onClick={handleClose}
       className={`
-        fixed inset-0 flex justify-center items-center z-60 transition-all
-        ${open ? "visible bg-black/60 backdrop-blur-xs" : "invisible bg-black/0"}
+        fixed inset-0 flex justify-center items-center z-60 transition-all duration-300
+        ${open ? "visible bg-black/70 backdrop-blur-sm" : "invisible bg-black/0"}
       `}
     >
       <div
         onClick={(e) => e.stopPropagation()}
         className={`
           transform transition-all
-          duration-300 ease-out
-          ${open ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-95 translate-y-4"}
+          duration-400 ease-[cubic-bezier(0.16,1,0.3,1)]
+          ${open ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-95 translate-y-6"}
         `}
       >
         {children}

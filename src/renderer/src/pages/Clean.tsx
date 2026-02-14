@@ -7,7 +7,6 @@ import { RefreshCw, Icon } from "lucide-react"
 import { broom } from "@lucide/lab"
 import { toast } from "react-toastify"
 import log from "electron-log/renderer"
-import Card from "@/components/ui/Card"
 
 const cleanups = [
   {
@@ -159,75 +158,162 @@ function Clean() {
     setIsCleaning(false)
   }
 
+  const totalFreed = Object.values(cleanupResults).reduce(
+    (sum: number, v: any) => sum + (parseInt(v) || 0),
+    0,
+  )
+
+  const cleanIcons: Record<string, string> = {
+    temp: "🗑️",
+    prefetch: "⚡",
+    recyclebin: "♻️",
+    "windows-update": "🔄",
+    thumbnails: "🖼️",
+  }
+
   return (
     <RootDiv>
-      <div className="flex flex-col gap-6">
-        <Card className="flex items-center gap-4 p-4">
-          <div className="flex items-center justify-center p-3 rounded-xl bg-teal-500/10">
-            <Icon iconNode={broom} className="text-teal-500" size={28} />
-          </div>
-          <div className="flex-1">
-            <h2 className="text-2xl font-bold text-sparkle-text mb-1">System Cleanup</h2>
-            <p className="text-sm text-sparkle-text-secondary">
-              Last cleaned: <span className="font-medium">{lastClean}</span>
-            </p>
-          </div>
-        </Card>
+      <div className="max-w-[1600px] mx-auto pb-10">
+        {/* Header */}
+        <div className="mb-6 animate-fade-slide-up">
+          <h1 className="text-2xl font-bold text-sparkle-text tracking-tight">System Cleanup</h1>
+          <p className="text-sm text-sparkle-text-secondary mt-1">
+            Remove temporary files and free up disk space
+          </p>
+        </div>
 
-        <Card className="flex flex-col divide-y divide-sparkle-border p-0">
+        {/* Stats Row */}
+        <div className="grid grid-cols-3 gap-4 mb-6">
+          <div
+            className="animate-fade-slide-up rounded-2xl border border-sparkle-border/30 bg-sparkle-card/30 backdrop-blur-sm p-4"
+            style={{ animationDelay: "40ms" }}
+          >
+            <div className="text-[10px] font-bold uppercase tracking-widest text-sparkle-text-muted/70 mb-1">
+              Selected
+            </div>
+            <div className="text-2xl font-bold text-sparkle-text">
+              {selected.length}
+              <span className="text-sm font-normal text-sparkle-text-muted ml-1">
+                / {cleanups.length}
+              </span>
+            </div>
+          </div>
+          <div
+            className="animate-fade-slide-up rounded-2xl border border-sparkle-border/30 bg-sparkle-card/30 backdrop-blur-sm p-4"
+            style={{ animationDelay: "80ms" }}
+          >
+            <div className="text-[10px] font-bold uppercase tracking-widest text-sparkle-text-muted/70 mb-1">
+              Space Freed
+            </div>
+            <div className="text-2xl font-bold text-teal-400">{formatBytes(totalFreed)}</div>
+          </div>
+          <div
+            className="animate-fade-slide-up rounded-2xl border border-sparkle-border/30 bg-sparkle-card/30 backdrop-blur-sm p-4"
+            style={{ animationDelay: "120ms" }}
+          >
+            <div className="text-[10px] font-bold uppercase tracking-widest text-sparkle-text-muted/70 mb-1">
+              Last Cleaned
+            </div>
+            <div className="text-sm font-medium text-sparkle-text truncate mt-1">{lastClean}</div>
+          </div>
+        </div>
+
+        {/* Cleanup Items */}
+        <div className="space-y-3 mb-6">
           {cleanups.map(({ id, label, description }, idx) => {
             const isSelected = selected.includes(id)
+            const isInQueue = loadingQueue.includes(id)
+            const freed = cleanupResults[id]
+
             return (
               <div
                 key={id}
-                className={`relative flex items-center justify-between px-6 py-4 ${idx === 0 ? "rounded-t-xl" : ""} ${idx === cleanups.length - 1 ? "rounded-b-xl" : ""} group`}
+                className={`animate-fade-slide-up group relative overflow-hidden rounded-2xl border backdrop-blur-sm p-4 transition-all duration-300 cursor-pointer ${
+                  isSelected
+                    ? "border-teal-500/30 bg-teal-500/5 hover:bg-teal-500/10"
+                    : "border-sparkle-border/30 bg-sparkle-card/30 hover:bg-sparkle-card/50"
+                } ${isInQueue ? "ring-1 ring-teal-500/40" : ""}`}
+                style={{ animationDelay: `${160 + idx * 40}ms` }}
+                onClick={() => !isCleaning && toggleCleanup(id)}
               >
-                <div className="flex flex-col flex-1 min-w-0">
-                  <span className="text-base font-semibold text-sparkle-text truncate">
-                    {label}
-                  </span>
-                  <span className="text-xs text-sparkle-text-secondary mt-0.5 truncate">
-                    {description}
-                    {cleanupResults[id] ? ` (${formatBytes(cleanupResults[id])} cleared)` : ""}
-                  </span>
-                </div>
-                <div className="ml-4 flex items-center">
-                  <Toggle
-                    checked={isSelected}
-                    onChange={() => toggleCleanup(id)}
-                    disabled={isCleaning}
-                  />
-                </div>
-                {loadingQueue.includes(id) && (
-                  <div className="absolute inset-0 flex items-center justify-center z-10 rounded-xl">
-                    <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-sparkle-border border border-sparkle-border-secondary">
-                      <RefreshCw className="animate-spin text-teal-500" size={18} />
-                      <span className="text-sm font-medium text-teal-600">Cleaning...</span>
-                    </div>
-                  </div>
+                {isSelected && (
+                  <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-teal-400/50 to-transparent" />
                 )}
+
+                <div className="flex items-center gap-4">
+                  <div
+                    className={`text-2xl w-10 h-10 flex items-center justify-center rounded-xl transition-all duration-300 ${
+                      isSelected
+                        ? "bg-teal-500/15 scale-110"
+                        : "bg-sparkle-accent/50 grayscale opacity-60"
+                    }`}
+                  >
+                    {cleanIcons[id] || "📁"}
+                  </div>
+
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-semibold text-sparkle-text">{label}</span>
+                      {freed !== undefined && (
+                        <span className="text-[10px] font-bold text-teal-400 bg-teal-500/10 border border-teal-500/20 px-1.5 py-0.5 rounded-full">
+                          {formatBytes(freed)} freed
+                        </span>
+                      )}
+                    </div>
+                    <span className="text-xs text-sparkle-text-muted">{description}</span>
+                  </div>
+
+                  <div className="flex items-center gap-3" onClick={(e) => e.stopPropagation()}>
+                    {isInQueue && <RefreshCw className="animate-spin text-teal-400 w-4 h-4" />}
+                    <Toggle
+                      checked={isSelected}
+                      onChange={() => toggleCleanup(id)}
+                      disabled={isCleaning}
+                    />
+                  </div>
+                </div>
               </div>
             )
           })}
-        </Card>
+        </div>
 
-        <div className="flex justify-end mt-2">
+        {/* Action Bar */}
+        <div
+          className="animate-fade-slide-up flex items-center justify-between rounded-2xl border border-sparkle-border/30 bg-sparkle-card/30 backdrop-blur-sm p-4"
+          style={{ animationDelay: "360ms" }}
+        >
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() =>
+                setSelected(selected.length === cleanups.length ? [] : cleanups.map((c) => c.id))
+              }
+              disabled={isCleaning}
+              className="text-xs text-sparkle-text-secondary hover:text-sparkle-primary transition-colors disabled:opacity-50"
+            >
+              {selected.length === cleanups.length ? "Deselect All" : "Select All"}
+            </button>
+            {selected.includes("recyclebin") && (
+              <span className="text-[10px] text-amber-400 font-medium">
+                ⚠ Recycle Bin contents will be permanently deleted
+              </span>
+            )}
+          </div>
+
           <Button
             onClick={runSelectedCleanups}
             disabled={isCleaning || selected.length === 0}
-            size="md"
             variant="primary"
-            className="min-w-[180px] flex items-center justify-center gap-2 text-base font-semibold"
+            className="min-w-[160px] flex items-center justify-center gap-2"
           >
             {isCleaning ? (
               <>
-                <RefreshCw className="animate-spin" size={18} />
+                <RefreshCw className="animate-spin w-4 h-4" />
                 <span>Cleaning...</span>
               </>
             ) : (
               <>
-                <Icon iconNode={broom} size={18} />
-                <span>Clean Selected</span>
+                <Icon iconNode={broom} size={16} />
+                <span>Clean {selected.length > 0 ? `(${selected.length})` : "Selected"}</span>
               </>
             )}
           </Button>

@@ -55,8 +55,14 @@ export default function FirstTime(): React.ReactElement {
 
   return (
     <Modal open={open} onClose={() => setOpen(false)}>
-      <div className="bg-sparkle-card border border-sparkle-border rounded-2xl p-8 shadow-2xl max-w-lg w-full mx-4 flex flex-col items-center text-center">
-        <h1 className="text-3xl font-bold text-sparkle-text mb-4">Welcome to Sparkle</h1>
+      <div className="bg-sparkle-card/95 backdrop-blur-xl border border-sparkle-border rounded-2xl p-8 shadow-2xl max-w-lg w-full mx-4 flex flex-col items-center text-center">
+        <div className="w-16 h-16 bg-sparkle-primary/10 rounded-2xl flex items-center justify-center mb-5 relative">
+          <span className="text-3xl relative z-10">✦</span>
+          <div className="absolute inset-0 bg-sparkle-primary/5 blur-xl rounded-full" />
+        </div>
+        <h1 className="text-2xl font-bold text-sparkle-text mb-2 tracking-tight">
+          Welcome to Sparkle
+        </h1>
 
         <p className="text-sparkle-text-secondary mb-6">
           It looks like this is your first time here. <br />
@@ -75,18 +81,30 @@ export default function FirstTime(): React.ReactElement {
           <strong>getsparkle.net</strong>.
         </p>
 
-        <p className="text-red-500 mb-8 text-sm">
+        <p className="text-red-400/80 mb-8 text-xs border border-red-500/20 bg-red-500/5 rounded-xl p-3">
           If you download from any other source, this may be malware. Please uninstall and reinstall
           from{" "}
-          <a href="https://getsparkle.net" target="_blank" className="text-blue-500">
+          <a
+            href="https://getsparkle.net"
+            target="_blank"
+            className="text-sparkle-primary hover:underline"
+          >
             getsparkle.net
           </a>
           ,{" "}
-          <a href="https://github.com/Parcoil/Sparkle" target="_blank" className="text-blue-500">
+          <a
+            href="https://github.com/Parcoil/Sparkle"
+            target="_blank"
+            className="text-sparkle-primary hover:underline"
+          >
             our GitHub
           </a>
           , or{" "}
-          <a href="https://parcoil.com" target="_blank" className="text-blue-500">
+          <a
+            href="https://parcoil.com"
+            target="_blank"
+            className="text-sparkle-primary hover:underline"
+          >
             parcoil.com
           </a>
           .

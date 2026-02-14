@@ -6,7 +6,6 @@ import Button from "@/components/ui/button"
 import Modal from "@/components/ui/modal"
 import Toggle from "@/components/ui/Toggle"
 import { toast } from "react-toastify"
-import Card from "@/components/ui/Card"
 import { Dropdown } from "@/components/ui/dropdown"
 
 const themes = [
@@ -113,11 +112,11 @@ function Settings() {
   return (
     <>
       <Modal open={deleteModalOpen} onClose={() => setDeleteModalOpen(false)}>
-        <div className="bg-sparkle-card border border-sparkle-border rounded-2xl p-8 shadow-2xl max-w-md w-full mx-4">
-          <div className="text-center mb-6">
-            <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+        <div className="bg-sparkle-card/95 backdrop-blur-xl border border-sparkle-border/50 rounded-2xl p-6 shadow-2xl max-w-md w-full mx-4">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="p-2.5 rounded-xl bg-red-500/10 border border-red-500/20">
               <svg
-                className="w-8 h-8 text-red-500"
+                className="w-5 h-5 text-red-400"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -130,17 +129,21 @@ function Settings() {
                 />
               </svg>
             </div>
-            <h2 className="text-xl font-semibold text-white mb-3">Delete Legacy Backups</h2>
-            <p className="text-gray-300 text-sm leading-relaxed">
-              Are you sure you want to delete all legacy registry backups? This will permanently
-              remove the{" "}
-              <code className="bg-sparkle-border-secondary/20 px-1 py-0.5 rounded-sm text-xs">
-                C:\Sparkle\Backup
-              </code>{" "}
-              folder and all its contents.
-            </p>
+            <div>
+              <h2 className="text-base font-semibold text-sparkle-text tracking-tight">
+                Delete Legacy Backups
+              </h2>
+              <p className="text-xs text-sparkle-text-muted">This action cannot be undone</p>
+            </div>
           </div>
-          <div className="flex gap-3 justify-end">
+          <p className="text-sm text-sparkle-text-secondary leading-relaxed mb-4">
+            This will permanently delete{" "}
+            <code className="bg-sparkle-accent/50 px-1.5 py-0.5 rounded text-xs font-mono text-sparkle-text">
+              C:\Sparkle\Backup
+            </code>{" "}
+            and all its contents.
+          </p>
+          <div className="flex gap-2 justify-end">
             <Button variant="secondary" onClick={() => setDeleteModalOpen(false)}>
               Cancel
             </Button>
@@ -156,289 +159,225 @@ function Settings() {
           </div>
         </div>
       </Modal>
-      <RootDiv>
-        <div className="min-h-screen w-full pb-16 overflow-y-auto">
-          <div className="space-y-8 ">
-            <SettingSection title="Appearance">
-              <SettingCard>
-                <div className="space-y-4">
-                  <h3 className="text-base font-medium text-sparkle-text">Theme</h3>
-                  <div className="grid grid-cols-6 gap-3">
-                    {themes.map((t) => (
-                      <label
-                        key={t.value}
-                        className={`flex items-center justify-center gap-2 cursor-pointer p-3 rounded-lg border transition-all duration-200 active:scale-95 ${
-                          theme === t.value ? "border-sparkle-primary" : "border-sparkle-border"
-                        }`}
-                      >
-                        <input
-                          type="radio"
-                          name="theme"
-                          value={t.value}
-                          checked={theme === t.value}
-                          onChange={() => setTheme(t.value)}
-                          className="sr-only"
-                        />
-                        <span className="text-sparkle-text font-medium">{t.label}</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-              </SettingCard>
-            </SettingSection>
 
-            <SettingSection title="Discord RPC">
-              <SettingCard>
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <h3 className="text-base font-medium text-sparkle-text mb-1">
-                      Discord Rich Presence
-                    </h3>
-                    <p className="text-sm text-sparkle-text-secondary">
-                      Show your Sparkle activity on Discord
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <Toggle
-                      checked={discordEnabled}
-                      onChange={handleToggleDiscord}
-                      disabled={discordLoading}
-                    />
-                    <span
-                      className={`text-xs font-medium px-2 py-1 rounded-full ${
-                        discordEnabled
-                          ? "text-green-400 bg-green-400/10"
-                          : "text-sparkle-text-secondary bg-sparkle-border-secondary/20"
+      <RootDiv>
+        <div className="max-w-[900px] mx-auto pb-16">
+          {/* Header */}
+          <div className="mb-6 animate-fade-slide-up">
+            <h1 className="text-2xl font-bold text-sparkle-text tracking-tight">Settings</h1>
+            <p className="text-sm text-sparkle-text-secondary mt-1">
+              Sparkle v{jsonData.version} — Customize your experience
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            {/* Theme */}
+            <SettingSection title="Appearance" delay={40}>
+              <div className="space-y-3">
+                <p className="text-xs text-sparkle-text-muted">Choose your preferred theme</p>
+                <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+                  {themes.map((t) => (
+                    <label
+                      key={t.value}
+                      className={`flex items-center justify-center cursor-pointer p-2.5 rounded-xl border transition-all duration-200 active:scale-95 text-sm font-medium ${
+                        theme === t.value
+                          ? "border-sparkle-primary/50 bg-sparkle-primary/10 text-sparkle-primary shadow-[0_0_16px_-4px] shadow-sparkle-primary/20"
+                          : "border-sparkle-border/30 hover:border-sparkle-border/60 text-sparkle-text-secondary hover:text-sparkle-text"
                       }`}
                     >
-                      {discordEnabled ? "Enabled" : "Disabled"}
-                    </span>
-                  </div>
+                      <input
+                        type="radio"
+                        name="theme"
+                        value={t.value}
+                        checked={theme === t.value}
+                        onChange={() => setTheme(t.value)}
+                        className="sr-only"
+                      />
+                      {t.label}
+                    </label>
+                  ))}
                 </div>
-              </SettingCard>
+              </div>
             </SettingSection>
-            <SettingSection title="Updates">
-              <SettingCard>
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <h3 className="text-base font-medium text-sparkle-text mb-1">
-                      Check for Updates
-                    </h3>
-                    <p className="text-sm text-sparkle-text-secondary">Check for updates</p>
-                  </div>
-                  <Button onClick={checkForUpdates} disabled={checking}>
-                    {checking ? "Checking..." : "Check for Updates"}
-                  </Button>
-                </div>
-              </SettingCard>
-            </SettingSection>
-            <SettingSection title="Package Manager">
-              <SettingCard>
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <h3 className="text-base font-medium text-sparkle-text mb-1">
-                      Default Package Manager
-                    </h3>
-                    <p className="text-sm text-sparkle-text-secondary">
-                      Set the default package manager for installing apps
-                    </p>
-                  </div>
-                  <Dropdown
-                    value={defaultPackageManager}
-                    options={["Winget", "Chocolatey"]}
-                    onChange={(value) => {
-                      setDefaultPackageManager(value as "Chocolatey" | "Winget")
-                      localStorage.setItem("defaultPackageManager", value)
-                    }}
-                  />
-                </div>
-              </SettingCard>
-            </SettingSection>
-            <SettingSection title="Profile">
-              <SettingCard>
-                <div className="space-y-4">
-                  <h3 className="text-base font-medium text-sparkle-text">User Name</h3>
+
+            {/* Profile */}
+            <SettingSection title="Profile" delay={80}>
+              <div className="space-y-3">
+                <label className="block text-[10px] font-bold text-sparkle-text-secondary uppercase tracking-widest">
+                  Display Name
+                </label>
+                <div className="flex gap-2">
                   <input
                     type="text"
                     defaultValue={localStorage.getItem("sparkle:user") || ""}
                     onChange={(e) => localStorage.setItem("sparkle:user", e.target.value)}
-                    className="w-full bg-sparkle-card border border-sparkle-border rounded-lg px-3 py-2 text-sparkle-text focus:ring-0 focus:outline-hidden"
+                    className="flex-1 bg-sparkle-accent/50 border border-sparkle-border/50 rounded-xl px-4 py-2.5 text-sparkle-text text-sm focus:outline-hidden focus:border-sparkle-primary/60 focus:shadow-[0_0_16px_-4px] focus:shadow-sparkle-primary/20 transition-all placeholder:text-sparkle-text-muted/40"
                     placeholder="Enter your name"
                   />
-                  <div className="flex gap-2">
-                    <Button
-                      variant="secondary"
-                      onClick={async () => {
-                        const username = await invoke({ channel: "get-user-name" })
-                        localStorage.setItem("sparkle:user", username)
-                        toast.success("Name reset to system user")
-                      }}
-                    >
-                      Reset to System Name
-                    </Button>
-                  </div>
-                </div>
-              </SettingCard>
-            </SettingSection>
-
-            <SettingSection title="Privacy">
-              <SettingCard>
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <h3 className="text-base font-medium text-sparkle-text mb-1">
-                      Disable Analytics
-                    </h3>
-                    <p className="text-sm text-sparkle-text-secondary">
-                      Disables Posthog analytics
-                      <span className="inline-flex items-center gap-1 ml-2 text-yellow-500">
-                        <span className="w-1.5 h-1.5 bg-yellow-500 rounded-full"></span>
-                        Requires restart
-                      </span>
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <Toggle
-                      checked={posthogDisabled}
-                      onChange={() => setPosthogDisabled((v) => !v)}
-                    />
-                    <span
-                      className={`text-xs font-medium px-2 py-1 rounded-full ${
-                        posthogDisabled
-                          ? "text-green-400 bg-green-400/10"
-                          : "text-sparkle-text-secondary bg-sparkle-border-secondary/20"
-                      }`}
-                    >
-                      {posthogDisabled ? "Disabled" : "Enabled"}
-                    </span>
-                  </div>
-                </div>
-              </SettingCard>
-            </SettingSection>
-
-            <SettingSection title="Data Management">
-              <SettingCard>
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex-1">
-                    <h3 className="text-base font-medium text-sparkle-text mb-1">Legacy Backups</h3>
-                    <p className="text-sm text-sparkle-text-secondary">
-                      Remove old backup files stored in{" "}
-                      <code className="bg-sparkle-border-secondary/20 px-1 py-0.5 rounded-sm text-xs">
-                        C:\Sparkle\Backup
-                      </code>
-                    </p>
-                  </div>
-                  <Button variant="danger" onClick={() => setDeleteModalOpen(true)}>
-                    Delete Backups
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={async () => {
+                      const username = await invoke({ channel: "get-user-name" })
+                      localStorage.setItem("sparkle:user", username)
+                      toast.success("Name reset to system user")
+                    }}
+                  >
+                    Reset
                   </Button>
                 </div>
-                <div className="flex items-center justify-between mt-2">
-                  <div className="flex-1">
-                    <h3 className="text-base font-medium text-sparkle-text mb-1">
-                      Clear Sparkle Cache
-                    </h3>
-                    <p className="text-sm text-sparkle-text-secondary">
-                      Remove temporary files/logs Sparkle may leave behind.
-                    </p>
-                  </div>
-                  <Button variant="secondary" onClick={clearCache}>
-                    Clear Cache
+              </div>
+            </SettingSection>
+
+            {/* Integrations */}
+            <SettingSection title="Integrations" delay={120}>
+              <SettingRow
+                title="Discord Rich Presence"
+                description="Show Sparkle activity on Discord"
+              >
+                <Toggle
+                  checked={discordEnabled}
+                  onChange={handleToggleDiscord}
+                  disabled={discordLoading}
+                />
+              </SettingRow>
+              <div className="h-px bg-sparkle-border/15 mx-1" />
+              <SettingRow
+                title="Default Package Manager"
+                description="Used for app installs in the Apps page"
+              >
+                <Dropdown
+                  value={defaultPackageManager}
+                  options={["Winget", "Chocolatey"]}
+                  onChange={(value) => {
+                    setDefaultPackageManager(value as "Chocolatey" | "Winget")
+                    localStorage.setItem("defaultPackageManager", value)
+                  }}
+                />
+              </SettingRow>
+            </SettingSection>
+
+            {/* Privacy */}
+            <SettingSection title="Privacy" delay={160}>
+              <SettingRow
+                title="Disable Analytics"
+                description="Opt out of Posthog analytics"
+                badge="Requires restart"
+              >
+                <Toggle checked={posthogDisabled} onChange={() => setPosthogDisabled((v) => !v)} />
+              </SettingRow>
+            </SettingSection>
+
+            {/* System */}
+            <SettingSection title="System" delay={200}>
+              <SettingRow
+                title="System Tray Icon"
+                description="Keep Sparkle running in the tray"
+                badge="Requires restart"
+              >
+                <Toggle checked={trayEnabled} onChange={handleToggleTray} disabled={trayLoading} />
+              </SettingRow>
+              <div className="h-px bg-sparkle-border/15 mx-1" />
+              <SettingRow title="Check for Updates" description={`Current: v${jsonData.version}`}>
+                <Button onClick={checkForUpdates} disabled={checking} size="sm">
+                  {checking ? "Checking..." : "Check"}
+                </Button>
+              </SettingRow>
+              <div className="h-px bg-sparkle-border/15 mx-1" />
+              <SettingRow title="Restart Explorer" description="Restart Windows Explorer & Taskbar">
+                <Button variant="secondary" size="sm" onClick={handleRestartExplorer}>
+                  Restart
+                </Button>
+              </SettingRow>
+            </SettingSection>
+
+            {/* Data */}
+            <SettingSection title="Data Management" delay={240}>
+              <SettingRow title="Clear Cache" description="Remove temporary Sparkle files & logs">
+                <div className="flex gap-2">
+                  <Button variant="secondary" size="sm" onClick={clearCache}>
+                    Clear
                   </Button>
                   <Button
                     variant="secondary"
-                    className="ml-2"
-                    onClick={async () => {
-                      await invoke({ channel: "open-log-folder" })
-                    }}
+                    size="sm"
+                    onClick={() => invoke({ channel: "open-log-folder" })}
                   >
-                    Open Log Folder
+                    Logs
                   </Button>
                 </div>
-              </SettingCard>
+              </SettingRow>
+              <div className="h-px bg-sparkle-border/15 mx-1" />
+              <SettingRow
+                title="Legacy Backups"
+                description="Delete old backups from C:\Sparkle\Backup"
+              >
+                <Button variant="danger" size="sm" onClick={() => setDeleteModalOpen(true)}>
+                  Delete
+                </Button>
+              </SettingRow>
             </SettingSection>
 
-            <SettingSection title="Other">
-              <SettingCard>
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <h3 className="text-base font-medium text-sparkle-text mb-1">Show tray icon</h3>
-                    <p className="text-sm text-sparkle-text-secondary">
-                      Enable or disable Sparkle running in the system tray.
-                      <span className="inline-flex items-center gap-1 ml-2 text-yellow-500">
-                        <span className="w-1.5 h-1.5 bg-yellow-500 rounded-full"></span>
-                        Requires restart
-                      </span>
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <Toggle
-                      checked={trayEnabled}
-                      onChange={handleToggleTray}
-                      disabled={trayLoading}
-                    />
-                    <span
-                      className={`text-xs font-medium px-2 py-1 rounded-full ${
-                        trayEnabled
-                          ? "text-green-400 bg-green-400/10"
-                          : "text-sparkle-text-secondary bg-sparkle-border-secondary/20"
-                      }`}
-                    >
-                      {trayEnabled ? "Enabled" : "Disabled"}
-                    </span>
-                  </div>
-                </div>
-              </SettingCard>
-            </SettingSection>
-
-            <SettingSection title="Troubleshooting">
-              <SettingCard>
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <h3 className="text-base font-medium text-sparkle-text mb-1">
-                      Restart Explorer
-                    </h3>
-                    <p className="text-sm text-sparkle-text-secondary">
-                      Restarts Windows Explorer and Taskbar. Useful if the taskbar disappears.
-                    </p>
-                  </div>
-                  <Button variant="secondary" onClick={handleRestartExplorer}>
-                    Restart Explorer
-                  </Button>
-                </div>
-              </SettingCard>
-            </SettingSection>
-
-            <SettingSection title="About">
-              <SettingCard>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-base font-medium text-sparkle-text mb-1">Sparkle</h3>
-                    <p className="text-sm text-sparkle-text-secondary">
-                      Version {jsonData.version}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm text-sparkle-text-secondary">
-                      © {new Date().getFullYear()} Parcoil Network
-                    </p>
-                  </div>
-                </div>
-              </SettingCard>
-            </SettingSection>
+            {/* About */}
+            <div
+              className="animate-fade-slide-up text-center text-xs text-sparkle-text-muted/50 pt-4"
+              style={{ animationDelay: "280ms" }}
+            >
+              Sparkle v{jsonData.version} — © {new Date().getFullYear()} Parcoil Network
+            </div>
           </div>
         </div>
       </RootDiv>
     </>
   )
 }
-// this saves alot of time
-const SettingCard = ({ children, className = "" }) => (
-  <Card className={`p-4 ${className}`}>{children}</Card>
+
+const SettingSection = ({
+  title,
+  children,
+  delay = 0,
+}: {
+  title: string
+  children: React.ReactNode
+  delay?: number
+}) => (
+  <div
+    className="animate-fade-slide-up rounded-2xl border border-sparkle-border/30 bg-sparkle-card/30 backdrop-blur-sm overflow-hidden"
+    style={{ animationDelay: `${delay}ms` }}
+  >
+    <div className="px-5 py-3 border-b border-sparkle-border/15">
+      <h2 className="text-[10px] font-bold uppercase tracking-widest text-sparkle-text-muted/70">
+        {title}
+      </h2>
+    </div>
+    <div className="p-5 space-y-3">{children}</div>
+  </div>
 )
 
-const SettingSection = ({ title, children }) => (
-  <div className="space-y-4">
-    <h2 className="text-xl font-semibold text-sparkle-primary">{title}</h2>
-    {children}
+const SettingRow = ({
+  title,
+  description,
+  badge,
+  children,
+}: {
+  title: string
+  description: string
+  badge?: string
+  children: React.ReactNode
+}) => (
+  <div className="flex items-center justify-between gap-4">
+    <div className="flex-1 min-w-0">
+      <div className="flex items-center gap-2">
+        <h3 className="text-sm font-semibold text-sparkle-text">{title}</h3>
+        {badge && (
+          <span className="text-[9px] text-amber-400 bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 rounded-full font-medium">
+            {badge}
+          </span>
+        )}
+      </div>
+      <p className="text-[11px] text-sparkle-text-muted">{description}</p>
+    </div>
+    <div className="shrink-0">{children}</div>
   </div>
 )
 export default Settings

@@ -1,6 +1,5 @@
 import RootDiv from "@/components/rootdiv"
 import Button from "@/components/ui/button"
-import Card from "@/components/ui/Card"
 import Toggle from "@/components/ui/Toggle"
 import {
   GpuIcon,
@@ -453,87 +452,182 @@ function Utilities() {
     }
   }
 
+  // Group utilities by type for visual sections
+  const buttonUtils = utilities.filter((u) => u.type === "button")
+  const toggleUtils = utilities.filter((u) => u.type === "toggle")
+  const dropdownUtils = utilities.filter((u) => u.type === "dropdown")
+
   return (
     <>
       <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
-        <div className="bg-sparkle-card border border-sparkle-border rounded-2xl p-8 shadow-2xl max-w-lg w-full mx-4 flex flex-col items-center text-center">
-          <h1 className="text-3xl font-bold text-sparkle-text mb-4">
-            What's New in the Utilities Page
-          </h1>
-
-          <p className="text-sparkle-text-secondary mb-6">
-            We've redesigned the Utilities page to be more useful and powerful.
+        <div className="bg-sparkle-card/95 backdrop-blur-xl border border-sparkle-border/50 rounded-2xl p-6 shadow-2xl max-w-md w-full mx-4">
+          <h2 className="text-lg font-semibold text-sparkle-text mb-2 tracking-tight">
+            Utilities Redesigned
+          </h2>
+          <p className="text-sm text-sparkle-text-secondary mb-4 leading-relaxed">
+            Utilities now have toggles, dropdowns, and buttons that sync with your Windows settings
+            via PowerShell. Manage updates, drivers, network, and more — all in one place.
           </p>
-
-          <p className="text-sparkle-text-secondary mb-4 text-sm">
-            - Each utility now shows detailed descriptions and has new controls like toggles,
-            buttons, or dropdowns.
-            <br />
-            <br />
-            - Utilities run or apply settings directly using PowerShell scripts behind the scenes.
-            <br />
-            <br />
-            - The settings sync with your Windows always reflecting your current configuration no
-            matter where you toggle these settings.
-            <br />
-            <br />
-            <p className="text-sparkle-primary">
-              - You can now manage Windows updates, restart graphics drivers, reset network, and
-              more.
-            </p>
-            <br /> <br />
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-4 w-full justify-center">
-            <Button
-              onClick={() => {
-                setModalOpen(false)
-                localStorage.setItem("utilitiesModalShown", "true")
-              }}
-            >
-              Got it
-            </Button>
-          </div>
+          <Button
+            onClick={() => {
+              setModalOpen(false)
+              localStorage.setItem("utilitiesModalShown", "true")
+            }}
+            className="w-full justify-center"
+          >
+            Got it
+          </Button>
         </div>
       </Modal>
 
       <RootDiv>
-        <div className="flex gap-4 flex-col mb-10">
-          {utilities.map((util) => {
-            return (
-              <Card className="p-4 flex items-center gap-4" key={util.name}>
-                {util.icon}
-                <div>
-                  <h1>{util.name}</h1>
-                  <p className="text-sm  text-sparkle-text-secondary">{util.description}</p>
-                </div>
-                <div className="flex justify-end ml-auto">
-                  {util.type === "toggle" &&
-                    (loadingStates[util.name] ? (
-                      <div className="w-6 h-6 border-2 border-sparkle-border-secondary border-t-sparkle-primary rounded-full animate-spin" />
-                    ) : (
-                      <Toggle
-                        checked={toggleStates[util.name] || false}
-                        onChange={(checked: boolean) => handleToggleChange(util, checked)}
-                      />
-                    ))}
-                  {util.type === "button" && (
-                    <Button onClick={() => handleButtonClick(util)}>{util.buttonText}</Button>
-                  )}
-                  {util.type === "dropdown" &&
-                    (loadingStates[util.name] ? (
-                      <div className="w-6 h-6 border-2 border-sparkle-border-secondary border-t-sparkle-primary rounded-full animate-spin" />
-                    ) : (
-                      <Dropdown
-                        options={util.options || []}
-                        value={dropdownValues[util.name] || util.options?.[0] || ""}
-                        onChange={(value) => handleDropdownChange(util, value)}
-                      />
-                    ))}
-                </div>
-              </Card>
-            )
-          })}
+        <div className="max-w-[1600px] mx-auto pb-10">
+          {/* Header */}
+          <div className="mb-6 animate-fade-slide-up">
+            <h1 className="text-2xl font-bold text-sparkle-text tracking-tight">Utilities</h1>
+            <p className="text-sm text-sparkle-text-secondary mt-1">
+              System tools and quick actions for Windows management
+            </p>
+          </div>
+
+          {/* Toggle Utilities */}
+          {toggleUtils.length > 0 && (
+            <div className="mb-6">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-sparkle-text-muted/70">
+                  Settings
+                </span>
+                <div className="flex-1 h-px bg-gradient-to-r from-sparkle-border/30 to-transparent" />
+              </div>
+              <div className="space-y-3">
+                {toggleUtils.map((util, i) => (
+                  <div
+                    key={util.name}
+                    className={`animate-fade-slide-up group rounded-2xl border backdrop-blur-sm p-4 transition-all duration-300 ${
+                      toggleStates[util.name]
+                        ? "border-sparkle-primary/20 bg-sparkle-primary/5"
+                        : "border-sparkle-border/30 bg-sparkle-card/30 hover:bg-sparkle-card/50"
+                    }`}
+                    style={{ animationDelay: `${40 + i * 40}ms` }}
+                  >
+                    {toggleStates[util.name] && (
+                      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-sparkle-primary/40 to-transparent rounded-t-2xl" />
+                    )}
+                    <div className="flex items-center gap-4">
+                      <div
+                        className={`p-2.5 rounded-xl border transition-colors ${
+                          toggleStates[util.name]
+                            ? "bg-sparkle-primary/10 border-sparkle-primary/20 text-sparkle-primary"
+                            : "bg-sparkle-accent/50 border-sparkle-border/30 text-sparkle-text-muted"
+                        }`}
+                      >
+                        {util.icon}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-sm font-semibold text-sparkle-text">{util.name}</h3>
+                        <p className="text-[11px] text-sparkle-text-muted">{util.description}</p>
+                      </div>
+                      <div className="shrink-0">
+                        {loadingStates[util.name] ? (
+                          <div className="w-5 h-5 border-2 border-sparkle-primary/30 border-t-sparkle-primary rounded-full animate-spin" />
+                        ) : (
+                          <Toggle
+                            checked={toggleStates[util.name] || false}
+                            onChange={(checked: boolean) => handleToggleChange(util, checked)}
+                          />
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Dropdown Utilities */}
+          {dropdownUtils.length > 0 && (
+            <div className="mb-6">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-sparkle-text-muted/70">
+                  Configuration
+                </span>
+                <div className="flex-1 h-px bg-gradient-to-r from-sparkle-border/30 to-transparent" />
+              </div>
+              <div className="space-y-3">
+                {dropdownUtils.map((util, i) => (
+                  <div
+                    key={util.name}
+                    className="animate-fade-slide-up rounded-2xl border border-sparkle-border/30 bg-sparkle-card/30 backdrop-blur-sm p-4 transition-all duration-300 hover:bg-sparkle-card/50"
+                    style={{ animationDelay: `${120 + i * 40}ms` }}
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="p-2.5 rounded-xl bg-sparkle-accent/50 border border-sparkle-border/30 text-sparkle-text-muted">
+                        {util.icon}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-sm font-semibold text-sparkle-text">{util.name}</h3>
+                        <p className="text-[11px] text-sparkle-text-muted">{util.description}</p>
+                      </div>
+                      <div className="shrink-0">
+                        {loadingStates[util.name] ? (
+                          <div className="w-5 h-5 border-2 border-sparkle-primary/30 border-t-sparkle-primary rounded-full animate-spin" />
+                        ) : (
+                          <Dropdown
+                            options={util.options || []}
+                            value={dropdownValues[util.name] || util.options?.[0] || ""}
+                            onChange={(value) => handleDropdownChange(util, value)}
+                          />
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Button Utilities (Quick Actions) */}
+          {buttonUtils.length > 0 && (
+            <div className="mb-6">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-sparkle-text-muted/70">
+                  Quick Actions
+                </span>
+                <div className="flex-1 h-px bg-gradient-to-r from-sparkle-border/30 to-transparent" />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                {buttonUtils.map((util, i) => (
+                  <div
+                    key={util.name}
+                    className="animate-fade-slide-up group rounded-2xl border border-sparkle-border/30 bg-sparkle-card/30 backdrop-blur-sm p-4 transition-all duration-300 hover:bg-sparkle-card/50 hover:border-sparkle-primary/20 hover:-translate-y-0.5 hover:shadow-lg"
+                    style={{ animationDelay: `${200 + i * 30}ms` }}
+                  >
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="p-2 rounded-xl bg-sparkle-accent/50 border border-sparkle-border/30 text-sparkle-text-muted group-hover:text-sparkle-primary group-hover:border-sparkle-primary/20 transition-colors">
+                        {util.icon}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-sm font-semibold text-sparkle-text group-hover:text-sparkle-primary transition-colors">
+                          {util.name}
+                        </h3>
+                      </div>
+                    </div>
+                    <p className="text-[11px] text-sparkle-text-muted mb-3 leading-relaxed">
+                      {util.description}
+                    </p>
+                    <Button
+                      onClick={() => handleButtonClick(util)}
+                      variant="secondary"
+                      size="sm"
+                      className="w-full justify-center"
+                    >
+                      {util.buttonText}
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </RootDiv>
     </>

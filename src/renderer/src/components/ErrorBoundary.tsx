@@ -48,13 +48,30 @@ class ErrorBoundary extends Component<Props, State> {
         <div className="flex flex-col h-screen bg-sparkle-bg text-sparkle-text items-center justify-center p-8">
           {/* @ts-expect-error */}
           <TitleBar />
-          <div className="max-w-xl w-full rounded-2xl border border-sparkle-border bg-sparkle-card p-8">
-            <h1 className="text-2xl font-semibold text-red-500 mb-2">Something went wrong</h1>
-            <p className="text-sparkle-text-secondary mb-4">
+          <div className="max-w-xl w-full rounded-2xl border border-sparkle-border bg-sparkle-card/90 backdrop-blur-xl p-8">
+            <div className="w-12 h-12 bg-red-500/10 rounded-xl flex items-center justify-center mb-4">
+              <svg
+                className="w-6 h-6 text-red-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"
+                />
+              </svg>
+            </div>
+            <h1 className="text-xl font-semibold text-red-400 mb-2 tracking-tight">
+              Something went wrong
+            </h1>
+            <p className="text-sparkle-text-secondary text-sm mb-4">
               Sparkle encountered an unexpected error. Please help us fix it by reporting this
               issue.
             </p>
-            <pre className="mb-6 p-4 rounded-lg bg-sparkle-accent text-xs text-sparkle-text overflow-x-auto overflow-y-auto max-h-40 border border-sparkle-border select-all">
+            <pre className="mb-6 p-4 rounded-xl bg-sparkle-accent/80 text-xs text-sparkle-text font-mono overflow-x-auto overflow-y-auto max-h-40 border border-sparkle-border select-all">
               {errorMessage}
               {errorStack && `\n\n${errorStack}`}
             </pre>

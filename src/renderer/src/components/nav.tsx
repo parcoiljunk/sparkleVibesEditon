@@ -82,15 +82,18 @@ function Nav({ collapsed }) {
 
   return (
     <nav
-      className={`h-screen text-sparkle-text fixed left-0 top-0 flex flex-col py-6 z-40  transition-all duration-300 ease-in-out ${collapsed ? "w-16" : "w-52"}`}
+      className={`h-screen text-sparkle-text fixed left-0 top-0 flex flex-col py-6 z-40 transition-all duration-300 ease-in-out ${collapsed ? "w-16" : "w-52"}`}
     >
-      <div className="flex-1 flex flex-col gap-2 px-3 mt-10 relative" ref={containerRef}>
+      <div className="flex-1 flex flex-col gap-1 px-2.5 mt-10 relative" ref={containerRef}>
+        {/* Glowing pill indicator */}
         <div
-          className="absolute left-0 w-1 bg-sparkle-primary rounded-sm transition-all duration-300"
+          className="absolute rounded-lg bg-sparkle-primary/10 border border-sparkle-primary/25 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] shadow-[0_0_16px_-4px] shadow-sparkle-primary/20"
           style={{
             top: indicatorStyle.top,
             height: indicatorStyle.height,
-            transition: "top 0.2s ease, height 0.2s ease",
+            left: "4px",
+            right: "4px",
+            transition: "top 0.3s cubic-bezier(0.16, 1, 0.3, 1), height 0.2s ease",
           }}
         />
         {Object.entries(tabs).map(([id, { label, path }]) => (
@@ -103,13 +106,17 @@ function Nav({ collapsed }) {
               `flex items-center gap-3 py-2 rounded-lg transition-all duration-200 border relative ${collapsed ? "px-2 justify-center" : "px-3"}`,
               activeTab === id
                 ? "border-transparent text-sparkle-primary"
-                : "text-sparkle-text-secondary hover:bg-sparkle-border-secondary hover:text-sparkle-text border-transparent",
+                : "text-sparkle-text-secondary hover:text-sparkle-text border-transparent",
             )}
           >
-            <div>{tabIcons[id]}</div>
-            {!collapsed && <span className="text-sm">{label}</span>}
+            <div
+              className={clsx("transition-transform duration-200", activeTab === id && "scale-110")}
+            >
+              {tabIcons[id]}
+            </div>
+            {!collapsed && <span className="text-sm font-medium">{label}</span>}
             {!collapsed && id === "utilities" && (
-              <span className="text-xs bg-sparkle-primary text-sparkle-bg px-1.5 py-0.5 rounded-full">
+              <span className="text-[10px] font-semibold bg-sparkle-primary/15 text-sparkle-primary border border-sparkle-primary/25 px-1.5 py-0.5 rounded-full tracking-wider uppercase">
                 New
               </span>
             )}
@@ -119,16 +126,17 @@ function Nav({ collapsed }) {
       {needsRestart && (
         <button
           className={clsx(
-            "flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 border m-3",
-            "bg-sparkle-card text-sparkle-text border-sparkle-border-secondary hover:bg-sparkle-border-secondary hover:text-sparkle-text",
+            "flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-300 border m-3",
+            "bg-red-500/10 text-red-400 border-red-500/25 hover:bg-red-500/20 hover:border-red-500/40 hover:shadow-[0_0_16px_-4px] hover:shadow-red-500/20",
           )}
           onClick={() => setShowRestartModal(true)}
         >
           <span
-            className={`flex text-center items-center gap-2 text-red-500 ${collapsed ? "justify-center" : ""}`}
+            className={`flex text-center items-center gap-2 ${collapsed ? "justify-center" : ""}`}
             title="Restart Windows"
           >
-            <RefreshCw size={16} /> {!collapsed && "Restart Now"}
+            <RefreshCw size={16} className="animate-spin" style={{ animationDuration: "3s" }} />{" "}
+            {!collapsed && <span className="text-sm font-medium">Restart Now</span>}
           </span>
         </button>
       )}
@@ -153,16 +161,26 @@ function Nav({ collapsed }) {
         </div>
       </Modal>
       <div
-        className={`flex items-center justify-center gap-2 mt-4 mb-2 ${collapsed ? "flex-col" : ""}`}
+        className={`flex items-center justify-center gap-3 mt-4 mb-2 ${collapsed ? "flex-col" : ""}`}
       >
-        <a href="https://github.com/parcoil/sparkle" target="_blank">
-          <GithubIcon className="w-5 fill-sparkle-primary" />
+        <a
+          href="https://github.com/parcoil/sparkle"
+          target="_blank"
+          className="opacity-50 hover:opacity-100 transition-opacity duration-200"
+        >
+          <GithubIcon className="w-4.5 fill-sparkle-text-secondary hover:fill-sparkle-primary transition-colors" />
         </a>
-        <a href="https://discord.com/invite/En5YJYWj3Z" target="_blank">
-          <DiscordIcon className="w-5 fill-sparkle-primary" />
+        <a
+          href="https://discord.com/invite/En5YJYWj3Z"
+          target="_blank"
+          className="opacity-50 hover:opacity-100 transition-opacity duration-200"
+        >
+          <DiscordIcon className="w-4.5 fill-sparkle-text-secondary hover:fill-sparkle-primary transition-colors" />
         </a>
       </div>
-      <p className="text-sparkle-primary text-center text-sm">v{info.version}</p>
+      <p className="text-sparkle-text-muted text-center text-xs font-mono tracking-wide">
+        v{info.version}
+      </p>
     </nav>
   )
 }

@@ -34,13 +34,13 @@ const Button: React.FC<ButtonProps> = ({
 
   const variants: Record<ButtonVariant, string> = {
     primary:
-      "bg-sparkle-primary text-white hover:brightness-110 border-sparkle-secondary hover:bg-sparkle-secondary hover:border-sparkle-primary",
+      "bg-sparkle-primary text-sparkle-bg font-semibold hover:shadow-[0_0_20px_-4px] hover:shadow-sparkle-primary/40 hover:brightness-110 border border-sparkle-primary/30",
     outline:
-      "border border-sparkle-primary text-sparkle-primary hover:bg-sparkle-primary hover:text-white",
+      "border border-sparkle-primary/40 text-sparkle-primary hover:bg-sparkle-primary/10 hover:border-sparkle-primary/60 hover:shadow-[0_0_16px_-4px] hover:shadow-sparkle-primary/20",
     secondary:
-      "bg-sparkle-card border border-sparkle-secondary text-sparkle-text hover:bg-sparkle-secondary hover:border-sparkle-card",
+      "bg-sparkle-accent/60 border border-sparkle-border text-sparkle-text hover:bg-sparkle-accent hover:border-sparkle-border-secondary",
     danger:
-      "bg-red-600 text-white border border-red-700 hover:bg-red-700 hover:border-red-800 focus:ring-red-500",
+      "bg-red-500/15 text-red-400 border border-red-500/30 hover:bg-red-500/25 hover:border-red-500/50 hover:shadow-[0_0_16px_-4px] hover:shadow-red-500/20",
     "": "",
   }
 

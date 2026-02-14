@@ -14,7 +14,6 @@ import { useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import log from "electron-log/renderer"
 import { Upload } from "lucide-react"
-import Card from "@/components/ui/Card"
 import { LargeInput } from "@/components/ui/input"
 import { Dropdown } from "@/components/ui/dropdown"
 
@@ -280,43 +279,51 @@ function Apps() {
 
   return (
     <>
+      {/* Import Modal */}
       <Modal open={importModalOpen} onClose={() => setImportModalOpen(false)}>
-        <div className="bg-sparkle-card border border-sparkle-border rounded-2xl p-6 shadow-xl max-w-lg w-full mx-4">
-          <h3 className="text-xl font-semibold text-sparkle-text mb-3">
-            Import Apps ({importedApps.length})
+        <div className="bg-sparkle-card/95 backdrop-blur-xl border border-sparkle-border/50 rounded-2xl p-6 shadow-2xl max-w-lg w-full mx-4">
+          <h3 className="text-lg font-semibold text-sparkle-text mb-1 tracking-tight">
+            Import Apps
           </h3>
+          <p className="text-xs text-sparkle-text-muted mb-4">
+            {importedApps.length} app{importedApps.length !== 1 ? "s" : ""} found in file
+          </p>
 
-          <div className="text-sparkle-text-secondary text-sm leading-6 whitespace-pre-wrap max-h-64 overflow-y-auto custom-scrollbar mb-6">
+          <div className="max-h-64 overflow-y-auto custom-scrollbar space-y-1 mb-5">
             {importedApps.length > 0 ? (
-              <ul className="space-y-2 max-h-60 overflow-y-auto custom-scrollbar">
-                {importedApps.map((id) => {
-                  const app = appsList.find((a) => a.id === id)
-                  return (
-                    <li key={id} className="flex items-center gap-2 text-sparkle-text">
-                      <Checkbox
-                        checked={selectedImportedApps.includes(id)}
-                        onChange={(checked: boolean) => {
-                          setSelectedImportedApps((prev) => {
-                            if (checked) {
-                              return prev.includes(id) ? prev : [...prev, id]
-                            } else {
-                              return prev.filter((x) => x !== id)
-                            }
-                          })
-                        }}
-                      />
-
-                      {app ? app.name : `Unknown App (${id})`}
-                    </li>
-                  )
-                })}
-              </ul>
+              importedApps.map((id) => {
+                const app = appsList.find((a) => a.id === id)
+                return (
+                  <div
+                    key={id}
+                    className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-sparkle-accent/30 transition-colors"
+                  >
+                    <Checkbox
+                      checked={selectedImportedApps.includes(id)}
+                      onChange={(checked: boolean) => {
+                        setSelectedImportedApps((prev) =>
+                          checked
+                            ? prev.includes(id)
+                              ? prev
+                              : [...prev, id]
+                            : prev.filter((x) => x !== id),
+                        )
+                      }}
+                    />
+                    <span className="text-sm text-sparkle-text">
+                      {app ? app.name : `Unknown (${id})`}
+                    </span>
+                  </div>
+                )
+              })
             ) : (
-              <p className="text-sparkle-text-secondary italic">No apps found in file</p>
+              <p className="text-sparkle-text-muted text-sm italic text-center py-4">
+                No apps found
+              </p>
             )}
           </div>
 
-          <div className="flex justify-end gap-3">
+          <div className="flex justify-end gap-2">
             <Button variant="secondary" onClick={() => setImportModalOpen(false)}>
               Cancel
             </Button>
@@ -328,50 +335,84 @@ function Apps() {
                 handleAppAction("install", selectedImportedApps)
               }}
             >
-              Install Selected
+              Install ({selectedImportedApps.length})
             </Button>
           </div>
         </div>
       </Modal>
 
+      {/* Progress Modal */}
       <Modal open={!!loading} onClose={() => {}}>
-        <div className="bg-sparkle-card border border-sparkle-border rounded-2xl p-6 shadow-xl">
+        <div className="bg-sparkle-card/95 backdrop-blur-xl border border-sparkle-border/50 rounded-2xl p-6 shadow-2xl min-w-[320px]">
           <div className="flex items-center gap-4">
-            <div className="relative">
-              <div className="w-10 h-10 border-4 rounded-full animate-spin border-t-sparkle-primary border-sparkle-accent"></div>
+            <div className="relative w-12 h-12 flex items-center justify-center">
+              <div className="absolute inset-0 border-3 rounded-full animate-spin border-t-sparkle-primary border-sparkle-accent/30" />
+              {loading === "install" ? (
+                <Download className="w-5 h-5 text-sparkle-primary" />
+              ) : (
+                <Trash className="w-5 h-5 text-red-400" />
+              )}
             </div>
             <div>
-              <h3 className="text-lg font-medium text-sparkle-text">
-                {loading === "install" ? "Installing" : "Uninstalling"} {currentApp || "Apps"}
-                <p className="text-sm text-sparkle-text-secondary  mt-1 mb-1">
-                  {totalApps > 0 && ` (${currentIndex} of ${totalApps})`}
-                </p>
+              <h3 className="text-base font-semibold text-sparkle-text">
+                {loading === "install" ? "Installing" : "Uninstalling"}
               </h3>
-              <p className="text-sm text-sparkle-text-secondary">This may take a few moments</p>
+              <p className="text-sm text-sparkle-text-secondary truncate max-w-[200px]">
+                {currentApp || "Preparing..."}
+              </p>
+              {totalApps > 0 && (
+                <div className="mt-2">
+                  <div className="flex items-center justify-between text-[10px] text-sparkle-text-muted mb-1">
+                    <span>Progress</span>
+                    <span>
+                      {currentIndex} / {totalApps}
+                    </span>
+                  </div>
+                  <div className="w-full h-1.5 bg-sparkle-accent/50 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-sparkle-primary rounded-full transition-all duration-500"
+                      style={{ width: `${(currentIndex / totalApps) * 100}%` }}
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
       </Modal>
-      <RootDiv>
-        <LargeInput
-          icon={Search}
-          placeholder={`Search for ${filteredApps.length} apps...`}
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
 
-        {!wingetInstalled && (
-          <Card className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 w-full mt-5 flex gap-4 items-center">
-            <div className="p-3 bg-amber-500/10 rounded-lg">
-              <Download className="text-amber-500" size={24} />
-            </div>
-            <div className="flex-1">
-              <h1 className="font-medium text-sparkle-text">Winget Not Installed</h1>
-              <p className="text-sparkle-text-secondary">
-                Winget is required to install and manage apps. Click the button to install it.
-              </p>
-            </div>
-            <div className="ml-auto">
+      <RootDiv>
+        <div className="max-w-[1600px] mx-auto pb-10">
+          {/* Header */}
+          <div className="mb-5 animate-fade-slide-up">
+            <h1 className="text-2xl font-bold text-sparkle-text tracking-tight">App Manager</h1>
+            <p className="text-sm text-sparkle-text-secondary mt-1">
+              Install, uninstall, and manage applications via {source}
+            </p>
+          </div>
+
+          {/* Search */}
+          <div className="animate-fade-slide-up" style={{ animationDelay: "40ms" }}>
+            <LargeInput
+              icon={Search}
+              placeholder={`Search ${filteredApps.length} apps...`}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+
+          {/* Winget Warning */}
+          {!wingetInstalled && (
+            <div className="animate-fade-slide-up mt-4 rounded-2xl border border-amber-500/30 bg-amber-500/5 backdrop-blur-sm p-4 flex items-center gap-4">
+              <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20">
+                <Download className="text-amber-400 w-5 h-5" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-semibold text-sm text-sparkle-text">Winget Not Installed</h3>
+                <p className="text-xs text-sparkle-text-muted">
+                  Required to install and manage applications
+                </p>
+              </div>
               <Button
                 variant="outline"
                 className="flex items-center gap-2 border-amber-500/20 hover:bg-amber-500/10"
@@ -380,34 +421,34 @@ function Apps() {
               >
                 {wingetInstalling ? (
                   <>
-                    <div className="animate-spin inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full" />
+                    <div className="animate-spin w-4 h-4 border-2 border-current border-t-transparent rounded-full" />
                     Installing...
                   </>
                 ) : wingetChecking ? (
-                  <>Checking...</>
+                  "Checking..."
                 ) : (
                   <>
-                    <Download size={18} /> Install Winget
+                    <Download size={16} /> Install
                   </>
                 )}
               </Button>
             </div>
-          </Card>
-        )}
+          )}
 
-        {source === "Chocolatey" && !chocolateyInstalled && (
-          <Card className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 w-full mt-5 flex gap-4 items-center">
-            <div className="p-3 bg-amber-500/10 rounded-lg">
-              <Download className="text-amber-500" size={24} />
-            </div>
-            <div className="flex-1">
-              <h1 className="font-medium text-sparkle-text">Chocolatey Not Installed</h1>
-              <p className="text-sparkle-text-secondary">
-                Chocolatey is required to install and manage apps with this source. Click the button
-                to install it.
-              </p>
-            </div>
-            <div className="ml-auto">
+          {/* Chocolatey Warning */}
+          {source === "Chocolatey" && !chocolateyInstalled && (
+            <div className="animate-fade-slide-up mt-4 rounded-2xl border border-amber-500/30 bg-amber-500/5 backdrop-blur-sm p-4 flex items-center gap-4">
+              <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20">
+                <Download className="text-amber-400 w-5 h-5" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-semibold text-sm text-sparkle-text">
+                  Chocolatey Not Installed
+                </h3>
+                <p className="text-xs text-sparkle-text-muted">
+                  Required for Chocolatey package source
+                </p>
+              </div>
               <Button
                 variant="outline"
                 className="flex items-center gap-2 border-amber-500/20 hover:bg-amber-500/10"
@@ -416,172 +457,225 @@ function Apps() {
               >
                 {chocolateyInstalling ? (
                   <>
-                    <div className="animate-spin inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full" />
+                    <div className="animate-spin w-4 h-4 border-2 border-current border-t-transparent rounded-full" />
                     Installing...
                   </>
                 ) : chocolateyChecking ? (
-                  <>Checking...</>
+                  "Checking..."
                 ) : (
                   <>
-                    <Download size={18} /> Install Chocolatey
+                    <Download size={16} /> Install
                   </>
                 )}
               </Button>
             </div>
-          </Card>
-        )}
+          )}
 
-        <div className="flex gap-3 mt-5 w-auto ml-1 mr-1">
-          <Button
-            className="text-sparkle-text flex gap-2"
-            disabled={selectedApps.length === 0 || loading !== ""}
-            onClick={() => handleAppAction("install")}
+          {/* Action Bar */}
+          <div
+            className="animate-fade-slide-up mt-4 rounded-2xl border border-sparkle-border/30 bg-sparkle-card/30 backdrop-blur-sm p-3 flex items-center gap-2 flex-wrap"
+            style={{ animationDelay: "80ms" }}
           >
-            <Download className="w-5" />
-            Install Selected
-          </Button>
-          <Button
-            className="flex gap-2"
-            variant="danger"
-            disabled={selectedApps.length === 0 || loading !== ""}
-            onClick={() => handleAppAction("uninstall")}
-          >
-            <Trash className="w-5" />
-            Uninstall Selected
-          </Button>
-          <Button
-            className="flex gap-2"
-            onClick={exportSelectedApps}
-            disabled={selectedApps.length === 0}
-          >
-            <Download className="w-5" />
-            Export List
-          </Button>
-
-          <label className="flex gap-2 cursor-pointer bg-sparkle-border text-sparkle-text rounded-lg font-medium px-3 py-1.5 text-sm text-center items-center active:scale-90 hover:bg-sparkle-secondary transition-all duration-200">
-            <Upload className="w-5" />
-            Import List
-            <input
-              type="file"
-              accept="application/json"
-              className="hidden"
-              onChange={importSelectedApps}
-            />
-          </label>
-
-          {selectedApps.length > 0 && (
             <Button
-              className="flex gap-2 ml-auto bg-sparkle-border text-sparkle-text"
-              variant="secondary"
-              onClick={() => setSelectedApps([])}
+              disabled={selectedApps.length === 0 || loading !== ""}
+              onClick={() => handleAppAction("install")}
+              className="flex items-center gap-2"
             >
-              Uncheck All
+              <Download className="w-4 h-4" />
+              Install{selectedApps.length > 0 ? ` (${selectedApps.length})` : ""}
             </Button>
-          )}
-        </div>
-        <p className="mb-2 mt-2 text-sparkle-text-muted font-medium">
-          Looking to debloat windows? its located in {""}
-          <a className="text-sparkle-primary cursor-pointer" onClick={() => router("/tweaks")}>
-            Tweaks
-          </a>
-        </p>
+            <Button
+              variant="danger"
+              disabled={selectedApps.length === 0 || loading !== ""}
+              onClick={() => handleAppAction("uninstall")}
+              className="flex items-center gap-2"
+            >
+              <Trash className="w-4 h-4" />
+              Uninstall
+            </Button>
+            <Button
+              variant="secondary"
+              onClick={exportSelectedApps}
+              disabled={selectedApps.length === 0}
+              className="flex items-center gap-2"
+            >
+              <Download className="w-4 h-4" />
+              Export
+            </Button>
 
-        <div className="flex flex-row gap-2 items-center">
-          {import.meta.env.DEV && (
-            <p className=" text-red-500 text-xs">
-              You are in development mode, using local apps.json
-            </p>
-          )}
-          <div className="ml-auto flex gap-2 items-center">
-            <p className="text-sparkle-text-muted">Select Source:</p>
-            <Dropdown
-              options={["Winget", "Chocolatey"]}
-              value={source || "Winget"}
-              onChange={(value) => setSource(value as "Chocolatey" | "Winget")}
-            />
+            <label className="flex items-center gap-2 cursor-pointer rounded-lg font-medium px-3 py-1.5 text-sm bg-sparkle-accent/50 border border-sparkle-border/30 text-sparkle-text hover:bg-sparkle-accent/80 active:scale-95 transition-all duration-200">
+              <Upload className="w-4 h-4" />
+              Import
+              <input
+                type="file"
+                accept="application/json"
+                className="hidden"
+                onChange={importSelectedApps}
+              />
+            </label>
+
+            <div className="flex items-center gap-2 ml-auto">
+              {selectedApps.length > 0 && (
+                <button
+                  className="text-xs text-sparkle-text-secondary hover:text-sparkle-primary transition-colors"
+                  onClick={() => setSelectedApps([])}
+                >
+                  Clear All
+                </button>
+              )}
+
+              <div className="flex items-center gap-2 pl-2 border-l border-sparkle-border/20">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-sparkle-text-muted/70">
+                  Source
+                </span>
+                <Dropdown
+                  options={["Winget", "Chocolatey"]}
+                  value={source || "Winget"}
+                  onChange={(value) => setSource(value as "Chocolatey" | "Winget")}
+                />
+              </div>
+            </div>
           </div>
-        </div>
-        <div className="space-y-10 mb-10">
-          <Suspense
-            fallback={<div className="text-center text-sparkle-text-secondary">Loading...</div>}
-          >
-            {Object.entries(appsByCategory).map(([category, apps]) => (
-              <div key={category} className="space-y-4">
-                <h2 className="text-2xl text-sparkle-primary font-bold capitalize">{category}</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-4 mr-4">
-                  {apps.map((app) => {
-                    const appId = getAppIdForSource(app)
-                    return (
-                      <Card key={appId} onClick={() => toggleApp(appId)} className="p-4">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-4">
+
+          {/* Dev & Tip */}
+          <div className="flex items-center gap-2 mt-3 mb-4 px-1">
+            {import.meta.env.DEV && (
+              <span className="text-[10px] text-red-400 bg-red-500/10 border border-red-500/20 px-2 py-0.5 rounded-full font-medium">
+                DEV MODE
+              </span>
+            )}
+            <p className="text-xs text-sparkle-text-muted">
+              Looking to debloat?{" "}
+              <a
+                className="text-sparkle-primary hover:underline cursor-pointer"
+                onClick={() => router("/tweaks")}
+              >
+                Check Tweaks
+              </a>
+            </p>
+          </div>
+
+          {/* App Grid */}
+          <div className="space-y-8 mb-10">
+            <Suspense
+              fallback={
+                <div className="flex items-center justify-center py-12">
+                  <div className="animate-spin w-6 h-6 border-2 border-sparkle-primary/30 border-t-sparkle-primary rounded-full" />
+                </div>
+              }
+            >
+              {Object.entries(appsByCategory).map(([category, apps], catIdx) => (
+                <div
+                  key={category}
+                  className="animate-fade-slide-up"
+                  style={{ animationDelay: `${120 + catIdx * 60}ms` }}
+                >
+                  <div className="flex items-center gap-2 mb-3">
+                    <h2 className="text-sm font-bold uppercase tracking-widest text-sparkle-primary/80 capitalize">
+                      {category}
+                    </h2>
+                    <span className="text-[10px] text-sparkle-text-muted bg-sparkle-accent/50 px-1.5 py-0.5 rounded-full">
+                      {apps.length}
+                    </span>
+                    <div className="flex-1 h-px bg-gradient-to-r from-sparkle-border/30 to-transparent" />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+                    {apps.map((app) => {
+                      const appId = getAppIdForSource(app)
+                      const isSelected = selectedApps.includes(appId)
+                      return (
+                        <button
+                          key={appId}
+                          onClick={() => toggleApp(appId)}
+                          className={`group relative overflow-hidden rounded-2xl border backdrop-blur-sm p-4 text-left transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg active:scale-[0.98] ${
+                            isSelected
+                              ? "border-sparkle-primary/30 bg-sparkle-primary/5"
+                              : "border-sparkle-border/30 bg-sparkle-card/30 hover:bg-sparkle-card/50"
+                          }`}
+                        >
+                          {isSelected && (
+                            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-sparkle-primary/60 to-transparent" />
+                          )}
+
+                          <div className="flex items-center gap-3">
                             <div onClick={(e) => e.stopPropagation()}>
-                              <Checkbox
-                                checked={selectedApps.includes(appId)}
-                                onChange={() => toggleApp(appId)}
-                              />
+                              <Checkbox checked={isSelected} onChange={() => toggleApp(appId)} />
                             </div>
-                            <div className="min-w-10 max-w-10 max--h-10 min-h-10 rounded-lg overflow-hidden bg-sparkle-accent flex items-center justify-center">
+
+                            <div className="w-10 h-10 rounded-xl overflow-hidden bg-sparkle-accent/50 border border-sparkle-border/20 flex items-center justify-center shrink-0 transition-transform group-hover:scale-110">
                               {app.icon ? (
                                 <img
                                   src={app.icon}
                                   alt={app.name}
-                                  className="w-8 h-8 object-contain rounded-md"
+                                  className="w-7 h-7 object-contain"
                                 />
                               ) : (
-                                <img src="" alt="" className="w-6 h-6 opacity-50" />
+                                <Download className="w-4 h-4 text-sparkle-text-muted" />
                               )}
                             </div>
-                            <div>
-                              <h3 className="text-sparkle-text font-medium group-hover:text-sparkle-primary transition">
-                                {app.name}
-                              </h3>
+
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2">
+                                <h3 className="text-sm font-semibold text-sparkle-text truncate group-hover:text-sparkle-primary transition-colors">
+                                  {app.name}
+                                </h3>
+                                {app.warning && (
+                                  <span className="text-[9px] text-amber-400 bg-amber-500/10 border border-amber-500/20 px-1 py-0.5 rounded shrink-0">
+                                    ⚠
+                                  </span>
+                                )}
+                              </div>
                               {app.info && (
-                                <p className="text-sm text-sparkle-text-secondary line-clamp-1 font-semibold">
+                                <p className="text-[11px] text-sparkle-text-muted truncate">
                                   {app.info}
                                 </p>
                               )}
-                              <p className="text-xs text-sparkle-text-secondary">ID: {appId}</p>
+                              <p className="text-[10px] text-sparkle-text-muted/60 font-mono truncate mt-0.5">
+                                {appId}
+                              </p>
                             </div>
+
+                            {app.link && (
+                              <div onClick={(e) => e.stopPropagation()} className="shrink-0">
+                                <button
+                                  type="button"
+                                  aria-label={`Open ${app.name} website`}
+                                  className="p-1.5 rounded-lg opacity-0 group-hover:opacity-100 hover:bg-sparkle-accent/50 text-sparkle-text-muted hover:text-sparkle-primary transition-all duration-200"
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    try {
+                                      window.open(app.link, "_blank")
+                                    } catch (err) {
+                                      console.error("Failed to open external link", err)
+                                    }
+                                  }}
+                                >
+                                  <ExternalLink className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            )}
                           </div>
-                          {app.link && (
-                            <div onClick={(e) => e.stopPropagation()}>
-                              <button
-                                type="button"
-                                aria-label={`Open ${app.name} website`}
-                                className="ml-3 text-sparkle-primary hover:text-sparkle-text-secondary transition-opacity"
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                  try {
-                                    window.open(app.link, "_blank")
-                                  } catch (err) {
-                                    console.error("Failed to open external link", err)
-                                  }
-                                }}
-                              >
-                                <ExternalLink className="w-4 h-4" />
-                              </button>
-                            </div>
-                          )}
-                        </div>
-                      </Card>
-                    )
-                  })}
+                        </button>
+                      )
+                    })}
+                  </div>
                 </div>
-              </div>
-            ))}
-          </Suspense>
-          <p className="text-center text-sparkle-text-muted">
-            Request more apps or make a pull request on{" "}
-            <a
-              href="https://github.com/parcoil/sparkle"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sparkle-primary"
-            >
-              github
-            </a>
-          </p>
+              ))}
+            </Suspense>
+
+            <p className="text-center text-xs text-sparkle-text-muted pt-4">
+              Request more apps on{" "}
+              <a
+                href="https://github.com/parcoil/sparkle"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sparkle-primary hover:underline"
+              >
+                GitHub
+              </a>
+            </p>
+          </div>
         </div>
       </RootDiv>
     </>

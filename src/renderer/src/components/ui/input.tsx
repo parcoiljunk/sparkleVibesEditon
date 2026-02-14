@@ -25,8 +25,8 @@ function Input({
       defaultValue={defaultValue}
       onChange={onChange}
       className={cn(
-        "w-full bg-sparkle-card border border-sparkle-border rounded-lg px-3 py-2 text-sparkle-text",
-        "focus:ring-0 focus:outline-hidden focus:border-sparkle-primary transition-colors",
+        "w-full bg-sparkle-card/80 border border-sparkle-border rounded-lg px-3 py-2 text-sparkle-text",
+        "focus:ring-0 focus:outline-hidden focus:border-sparkle-primary/60 focus:shadow-[0_0_12px_-4px] focus:shadow-sparkle-primary/20 transition-all duration-200",
         className,
       )}
       placeholder={placeholder}
@@ -54,9 +54,9 @@ function LargeInput({
   return (
     <div
       className={cn(
-        "flex items-center gap-3 bg-sparkle-card border border-sparkle-border",
-        "rounded-xl px-4 backdrop-blur-xs transition-colors",
-        "focus-within:border-sparkle-primary",
+        "flex items-center gap-3 bg-sparkle-card/80 border border-sparkle-border",
+        "rounded-xl px-4 backdrop-blur-sm transition-all duration-200",
+        "focus-within:border-sparkle-primary/60 focus-within:shadow-[0_0_16px_-4px] focus-within:shadow-sparkle-primary/15",
         className,
       )}
     >

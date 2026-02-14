@@ -8,9 +8,9 @@ interface RootDivProps {
 function RootDiv({ children, ...props }: RootDivProps): React.ReactElement {
   const [style, setStyle] = useState({
     opacity: 0,
-    transform: "translateY(90px)",
+    transform: "translateY(16px) scale(0.995)",
     transition:
-      "opacity 0.6s cubic-bezier(0.075,0.82,0.165,1), transform 0.6s cubic-bezier(0.075,0.82,0.165,1)",
+      "opacity 0.5s cubic-bezier(0.16,1,0.3,1), transform 0.5s cubic-bezier(0.16,1,0.3,1)",
   })
 
   useEffect(() => {
@@ -18,7 +18,7 @@ function RootDiv({ children, ...props }: RootDivProps): React.ReactElement {
       setStyle((prev) => ({
         ...prev,
         opacity: 1,
-        transform: "translateY(0)",
+        transform: "translateY(0) scale(1)",
       }))
     }, 10)
 
@@ -26,7 +26,7 @@ function RootDiv({ children, ...props }: RootDivProps): React.ReactElement {
       setStyle((prev) => ({
         ...prev,
         opacity: 0,
-        transform: "translateY(90px)",
+        transform: "translateY(16px) scale(0.995)",
       }))
       clearTimeout(timeout)
     }

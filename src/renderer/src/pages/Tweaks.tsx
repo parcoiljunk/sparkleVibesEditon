@@ -282,20 +282,26 @@ function Tweaks() {
   }, [filteredTweaks])
 
   const categoryIcons = {
-    Performance: <Zap className="w-4 h-4  text-yellow-500" />,
-    GPU: <Gpu className="w-4 h-4 text-red-500" />,
-    Privacy: <Shield className="w-4 h-4 text-green-500" />,
-    Network: <Network className="w-4 h-4 text-orange-500" />,
+    Performance: <Zap className="w-4 h-4 text-amber-400" />,
+    GPU: <Gpu className="w-4 h-4 text-rose-400" />,
+    Privacy: <Shield className="w-4 h-4 text-emerald-400" />,
+    Network: <Network className="w-4 h-4 text-orange-400" />,
     Appearance: <Paintbrush className="w-4 h-4 text-sparkle-primary" />,
-    Gaming: <Gamepad className="w-4 h-4 text-teal-500" />,
-    General: <Wrench className="w-4 h-4 text-blue-500" />,
+    Gaming: <Gamepad className="w-4 h-4 text-teal-400" />,
+    General: <Wrench className="w-4 h-4 text-sky-400" />,
   }
 
   if (isLoading) {
     return (
       <RootDiv>
-        <div className="flex items-center justify-center h-64">
-          <div className="text-slate-400">Loading tweaks...</div>
+        <div className="flex items-center justify-center h-full flex-col gap-4">
+          <div className="relative">
+            <div className="animate-spin w-8 h-8 border-2 border-sparkle-primary/30 border-t-sparkle-primary rounded-full" />
+            <div className="absolute inset-0 bg-sparkle-primary/10 blur-xl rounded-full" />
+          </div>
+          <p className="text-xs font-mono text-sparkle-text-muted tracking-widest uppercase">
+            Loading tweaks...
+          </p>
         </div>
       </RootDiv>
     )
@@ -309,8 +315,10 @@ function Tweaks() {
           setIsModalOpen(false)
         }}
       >
-        <div className="bg-sparkle-card border border-sparkle-border rounded-2xl p-6 shadow-xl max-w-lg w-full mx-4">
-          <h3 className="text-xl font-semibold text-sparkle-text mb-3">{selectedTweak?.title}</h3>
+        <div className="bg-sparkle-card/95 backdrop-blur-xl border border-sparkle-border rounded-2xl p-6 shadow-2xl max-w-lg w-full mx-4">
+          <h3 className="text-lg font-semibold text-sparkle-text mb-3 tracking-tight">
+            {selectedTweak?.title}
+          </h3>
           <div className="text-sparkle-text-secondary text-sm leading-6 whitespace-pre-wrap max-h-64 overflow-y-auto custom-scrollbar mb-6">
             {modalContent}
           </div>
@@ -375,118 +383,143 @@ function Tweaks() {
         </div>
       </Modal>
       <RootDiv>
-        <div className="max-w-[1800px] mx-auto ">
-          <div className="mb-4">
-            <div className="space-y-4">
-              <LargeInput
-                icon={Search}
-                placeholder="Search tweaks by name or description..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-
-              <div className="flex flex-wrap items-center gap-2">
-                {categories.map((category) => (
-                  <button
-                    key={category}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 active:scale-95  ${
-                      activeCategory === category
-                        ? "bg-sparkle-primary text-white shadow-lg border border-sparkle-border"
-                        : "bg-sparkle-card/50 text-sparkle-text-secondary  hover:bg-sparkle-border border border-sparkle-border-secondary"
-                    }`}
-                    onClick={() => setActiveCategory(category)}
-                  >
-                    {category}
-                  </button>
-                ))}
+        <div className="max-w-[1800px] mx-auto">
+          {/* ═══════ HEADER & SEARCH ═══════ */}
+          <div className="mb-5 space-y-4">
+            <div className="flex items-end justify-between gap-4">
+              <div>
+                <h1 className="text-2xl font-bold text-sparkle-text tracking-tight">
+                  System Tweaks
+                </h1>
+                <p className="text-sm text-sparkle-text-secondary mt-1">
+                  <span className="font-mono text-sparkle-primary">{sortedTweaks.length}</span>{" "}
+                  optimizations available &middot;{" "}
+                  <span className="font-mono text-green-400">
+                    {Object.values(toggleStates).filter(Boolean).length}
+                  </span>{" "}
+                  active
+                </p>
               </div>
+            </div>
+
+            <LargeInput
+              icon={Search}
+              placeholder="Search tweaks by name or description..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+
+            <div className="flex flex-wrap items-center gap-2">
+              {categories.map((category) => (
+                <button
+                  key={category}
+                  className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 active:scale-95 ${
+                    activeCategory === category
+                      ? "bg-sparkle-primary/15 text-sparkle-primary border border-sparkle-primary/30 shadow-[0_0_12px_-4px] shadow-sparkle-primary/20"
+                      : "bg-sparkle-card/50 text-sparkle-text-secondary hover:text-sparkle-text hover:bg-sparkle-accent border border-sparkle-border/50"
+                  }`}
+                  onClick={() => setActiveCategory(category)}
+                >
+                  <span className="flex items-center gap-1.5">
+                    {category !== "All" && (categoryIcons[category] || categoryIcons["General"])}
+                    {category}
+                  </span>
+                </button>
+              ))}
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
+          {/* ═══════ TWEAKS GRID ═══════ */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 pb-6">
             {sortedTweaks.length > 0 ? (
               sortedTweaks.map((tweak, _) => {
                 const originalIndex = tweaks.indexOf(tweak)
+                const isActive = toggleStates[tweak.name] || false
+
                 return (
-                  <Card key={originalIndex} className=" p-0 h-52">
-                    <div className="p-5 flex flex-col h-[260px]">
+                  <div
+                    key={originalIndex}
+                    className={`animate-fade-slide-up group relative overflow-hidden rounded-2xl border backdrop-blur-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 ${
+                      isActive
+                        ? "border-sparkle-primary/25 bg-sparkle-primary/5 hover:border-sparkle-primary/40"
+                        : "border-sparkle-border/30 bg-sparkle-card/30 hover:border-sparkle-border/60 hover:bg-sparkle-card/50"
+                    }`}
+                    style={{ animationDelay: `${Math.min(_ * 20, 200)}ms` }}
+                  >
+                    {/* Active indicator glow */}
+                    {isActive && (
+                      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-sparkle-primary/60 to-transparent" />
+                    )}
+
+                    <div className="p-5 flex flex-col h-[220px]">
+                      {/* Top Row: Badges + Toggle */}
                       <div className="flex items-center justify-between mb-3">
-                        {tweak.category && (
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <>
-                              {tweak.warning && (
-                                <Tooltip content={tweak.warning} delay={0.3} side="right">
-                                  <div className="p-1.5 bg-red-900/50 rounded-lg hover:bg-red-900/80 transition-colors">
-                                    <AlertTriangle className="w-4 h-4 text-red-400" />
-                                  </div>
-                                </Tooltip>
-                              )}
-                              {tweak.recommended && (
-                                <Tooltip content={"Recommended Tweak"} delay={0.3} side="right">
-                                  <div className="p-1.5 bg-green-500/50 rounded-lg hover:bg-green-500/80 transition-colors">
-                                    <Star className="w-4 h-4 text-white fill-white" />
-                                  </div>
-                                </Tooltip>
-                              )}
-                              {tweak.addedversion &&
-                                isNewInCurrentVersion(tweak.addedversion, CURRENT_VERSION) && (
-                                  <Tooltip
-                                    content={`New in Sparkle ${tweak.addedversion}`}
-                                    delay={0.3}
-                                    side="right"
-                                  >
-                                    <div className="p-1.5 bg-pink-500/50 rounded-lg hover:bg-pink-500/80 transition-colors">
-                                      <Plus className="w-4 h-4 text-white" />
-                                    </div>
-                                  </Tooltip>
-                                )}
-                              {tweak.updatedversion &&
-                                isUpdatedInCurrentVersion(
-                                  tweak.updatedversion,
-                                  CURRENT_VERSION,
-                                ) && (
-                                  <Tooltip
-                                    content={`Updated in Sparkle ${tweak.updatedversion}`}
-                                    delay={0.3}
-                                    side="right"
-                                  >
-                                    <div className="p-1.5 bg-blue-500/50 rounded-lg hover:bg-blue-500/80 transition-colors">
-                                      <RefreshCw className="w-4 h-4 text-white" />
-                                    </div>
-                                  </Tooltip>
-                                )}
-                              {(Array.isArray(tweak.category)
-                                ? tweak.category
-                                : [tweak.category]
-                              ).map((cat) => (
-                                <Tooltip
-                                  key={cat}
-                                  content={`${cat} Optimization`}
-                                  delay={0.3}
-                                  side="right"
-                                >
-                                  <div className="p-1.5 bg-sparkle-accent rounded-lg hover:bg-sparkle-bg transition-colors text-sparkle-text">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          {tweak.warning && (
+                            <Tooltip content={tweak.warning} delay={0.3} side="right">
+                              <div className="p-1.5 bg-red-500/10 rounded-lg border border-red-500/20 hover:bg-red-500/20 transition-colors">
+                                <AlertTriangle className="w-3.5 h-3.5 text-red-400" />
+                              </div>
+                            </Tooltip>
+                          )}
+                          {tweak.recommended && (
+                            <Tooltip content="Recommended" delay={0.3} side="right">
+                              <div className="p-1.5 bg-green-500/10 rounded-lg border border-green-500/20 hover:bg-green-500/20 transition-colors">
+                                <Star className="w-3.5 h-3.5 text-green-400 fill-green-400" />
+                              </div>
+                            </Tooltip>
+                          )}
+                          {tweak.addedversion &&
+                            isNewInCurrentVersion(tweak.addedversion, CURRENT_VERSION) && (
+                              <Tooltip
+                                content={`New in ${tweak.addedversion}`}
+                                delay={0.3}
+                                side="right"
+                              >
+                                <div className="p-1.5 bg-pink-500/10 rounded-lg border border-pink-500/20">
+                                  <Plus className="w-3.5 h-3.5 text-pink-400" />
+                                </div>
+                              </Tooltip>
+                            )}
+                          {tweak.updatedversion &&
+                            isUpdatedInCurrentVersion(tweak.updatedversion, CURRENT_VERSION) && (
+                              <Tooltip
+                                content={`Updated in ${tweak.updatedversion}`}
+                                delay={0.3}
+                                side="right"
+                              >
+                                <div className="p-1.5 bg-blue-500/10 rounded-lg border border-blue-500/20">
+                                  <RefreshCw className="w-3.5 h-3.5 text-blue-400" />
+                                </div>
+                              </Tooltip>
+                            )}
+                          {tweak.category &&
+                            (Array.isArray(tweak.category) ? tweak.category : [tweak.category]).map(
+                              (cat) => (
+                                <Tooltip key={cat} content={`${cat}`} delay={0.3} side="right">
+                                  <div className="p-1.5 bg-sparkle-accent/60 rounded-lg border border-sparkle-border/30 text-sparkle-text-secondary">
                                     {categoryIcons[cat] || categoryIcons["General"]}
                                   </div>
                                 </Tooltip>
-                              ))}
-                            </>
-                          </div>
-                        )}
-                        <div className="flex items-center m-0 gap-2">
+                              ),
+                            )}
+                        </div>
+
+                        <div className="flex items-center gap-2">
                           <Button
                             variant="secondary"
-                            className="px-2! py-1! text-xs flex items-center gap-1"
+                            className="px-2! py-1! text-[10px] flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity"
                             title="Open Docs"
                             onClick={(e) => {
                               e.preventDefault()
                               e.stopPropagation()
-
-                              const url = `https://docs.getsparkle.net/tweaks/${tweak.name}`
-                              window.open(url, "_blank")
+                              window.open(
+                                `https://docs.getsparkle.net/tweaks/${tweak.name}`,
+                                "_blank",
+                              )
                             }}
                           >
-                            <ExternalLink className="w-3 h-3" /> Docs
+                            <ExternalLink className="w-3 h-3" />
                           </Button>
                           {(() => {
                             const compatibility = isTweakCompatible(tweak)
@@ -494,8 +527,8 @@ function Tweaks() {
                               <>
                                 {!compatibility.compatible && (
                                   <Tooltip content={compatibility.reason} delay={0.3} side="right">
-                                    <div className="p-1.5 bg-orange-500/50 rounded-lg hover:bg-orange-500/80 transition-colors">
-                                      <Monitor className="w-4 h-4 text-orange-300" />
+                                    <div className="p-1.5 bg-orange-500/10 rounded-lg border border-orange-500/20">
+                                      <Monitor className="w-3.5 h-3.5 text-orange-300" />
                                     </div>
                                   </Tooltip>
                                 )}
@@ -520,6 +553,7 @@ function Tweaks() {
                                     <Button
                                       onClick={() => handleButtonClick(originalIndex)}
                                       disabled={!compatibility.compatible}
+                                      size="sm"
                                     >
                                       Apply
                                     </Button>
@@ -530,28 +564,43 @@ function Tweaks() {
                           })()}
                         </div>
                       </div>
-                      <div className="flex items-start mb-3">
-                        <h2 className="font-semibold text-sparkle-text text-base">{tweak.title}</h2>
-                      </div>
-                      <div className="flex flex-col flex-1 overflow-hidden">
-                        <p className="text-sparkle-text-secondary text-sm flex-1 overflow-y-auto custom-scrollbar pr-1">
-                          {tweak.description}
-                        </p>
+
+                      {/* Title */}
+                      <h2 className="font-semibold text-sparkle-text text-sm leading-tight mb-2 group-hover:text-sparkle-primary transition-colors">
+                        {tweak.title}
+                      </h2>
+
+                      {/* Description */}
+                      <p className="text-sparkle-text-secondary text-xs leading-relaxed flex-1 overflow-y-auto custom-scrollbar pr-1 opacity-70 group-hover:opacity-100 transition-opacity">
+                        {tweak.description}
+                      </p>
+
+                      {/* Bottom Status */}
+                      <div className="mt-3 pt-2 border-t border-sparkle-border/20 flex items-center justify-between">
+                        <span
+                          className={`text-[10px] font-mono uppercase tracking-wider ${isActive ? "text-green-400" : "text-sparkle-text-muted/50"}`}
+                        >
+                          {isActive ? "● Active" : "○ Inactive"}
+                        </span>
+                        {tweak.restart && (
+                          <span className="text-[10px] text-yellow-400/60 font-mono flex items-center gap-1">
+                            ⟳ Restart required
+                          </span>
+                        )}
                       </div>
                     </div>
-                  </Card>
+                  </div>
                 )
               })
             ) : (
-              <div className="col-span-full flex flex-col items-center justify-center py-16 text-center">
-                <div className="bg-sparkle-card p-6 rounded-2xl mb-4">
-                  <Search className="w-10 h-10 text-sparkle-text-secondary" />
+              <div className="col-span-full flex flex-col items-center justify-center py-20 text-center">
+                <div className="bg-sparkle-card/50 p-6 rounded-2xl mb-4 border border-sparkle-border/30">
+                  <Search className="w-10 h-10 text-sparkle-text-muted" />
                 </div>
-                <h3 className="text-xl font-medium mb-2 text-sparkle-text"> Loading Tweaks...</h3>
-                <h3 className="text-sm font-medium mb-2 text-sparkle-text-muted">
-                  No tweaks Found
-                </h3>
-                <p className="text-sparkle-text-secondary">Try adjusting your search or filters</p>
+                <h3 className="text-lg font-semibold mb-2 text-sparkle-text">No tweaks found</h3>
+                <p className="text-sparkle-text-secondary text-sm">
+                  Try adjusting your search or filters
+                </p>
               </div>
             )}
           </div>

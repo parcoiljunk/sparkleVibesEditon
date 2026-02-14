@@ -74,7 +74,7 @@ function App() {
       <Nav collapsed={sidebarCollapsed} />
       <div className="flex flex-1 pt-[50px] relative">
         <main
-          className={`flex-1 p-6 rounded-tl-2xl border-t border-l border-sparkle-border transition-all duration-300 ease-in-out ${sidebarCollapsed ? "ml-16" : "ml-52"}`}
+          className={`flex-1 p-6 rounded-tl-2xl border-t border-l border-sparkle-border/60 bg-sparkle-bg/40 backdrop-blur-xs transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${sidebarCollapsed ? "ml-16" : "ml-52"}`}
         >
           <Routes>
             <Route path="/" element={<Home />} />

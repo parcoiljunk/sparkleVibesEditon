@@ -485,6 +485,24 @@ function ensureWinget(): Promise<PowerShellResult> {
 }
 
 export { ensureWinget }
+async function getUsageStats(): Promise<{ cpu: number; ram: number; disk: number }> {
+  try {
+    const [load, mem, fsSize] = await Promise.all([si.currentLoad(), si.mem(), si.fsSize()])
+
+    const cDrive = fsSize.find((d: any) => d.mount.toUpperCase().startsWith("C:")) || fsSize[0]
+
+    return {
+      cpu: Math.round(load.currentLoad),
+      ram: Math.round((mem.active / mem.total) * 100),
+      disk: cDrive ? Math.round(cDrive.use) : 0,
+    }
+  } catch (error) {
+    console.error("Failed to get usage stats:", error)
+    return { cpu: 0, ram: 0, disk: 0 }
+  }
+}
+
+ipcMain.handle("get-usage-stats", getUsageStats)
 ipcMain.handle("restart", restartSystem)
 ipcMain.handle("open-log-folder", openLogFolder)
 ipcMain.handle("clear-sparkle-cache", clearSparkleCache)

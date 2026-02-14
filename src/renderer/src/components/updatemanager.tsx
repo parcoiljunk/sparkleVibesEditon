@@ -66,17 +66,29 @@ export default function UpdateManager(): React.ReactElement {
 
   return (
     <Modal open={updateOpen} onClose={() => {}}>
-      <div className="bg-sparkle-card border border-sparkle-border rounded-2xl p-6 shadow-xl max-w-lg w-full mx-4">
-        <h2 className="text-xl font-semibold mb-2 text-sparkle-primary">
+      <div className="bg-sparkle-card/95 backdrop-blur-xl border border-sparkle-border rounded-2xl p-6 shadow-xl max-w-lg w-full mx-4">
+        <div className="w-10 h-10 bg-sparkle-primary/10 rounded-xl flex items-center justify-center mb-4 relative">
+          <span className="text-lg relative z-10">&#x2728;</span>
+          <div className="absolute inset-0 bg-sparkle-primary/5 blur-lg rounded-full" />
+        </div>
+        <h2 className="text-lg font-semibold mb-2 text-sparkle-text tracking-tight">
           Update available{updateVersion ? ` (${updateVersion})` : ""}
         </h2>
-        <p className="mb-6 text-sparkle-text">
+        <p className="mb-6 text-sparkle-text-secondary text-sm">
           {isDownloaded
             ? "The update has been downloaded. Restart to install now."
             : isDownloading
               ? `Downloading update… ${Math.floor(downloadPercent)}%`
-              : "A new version is available. Please update to ensure sparkle keeps working properly."}
+              : "A new version is available. Please update to ensure Sparkle keeps working properly."}
         </p>
+        {isDownloading && (
+          <div className="w-full h-1.5 bg-sparkle-border rounded-full mb-6 overflow-hidden">
+            <div
+              className="h-full bg-sparkle-primary rounded-full transition-all duration-300 shadow-[0_0_8px_-2px] shadow-sparkle-primary/50"
+              style={{ width: `${downloadPercent}%` }}
+            />
+          </div>
+        )}
         <div className="flex justify-end gap-3">
           <Button onClick={handleUpdateNow} disabled={isDownloading}>
             {isDownloaded ? "Restart and install" : isDownloading ? "Downloading…" : "Update now"}

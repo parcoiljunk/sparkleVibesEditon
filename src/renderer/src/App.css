@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap")
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=JetBrains+Mono:wght@400;500;600&display=swap")
 layer(base);
 
 @import "tailwindcss";
@@ -19,14 +19,6 @@ layer(base);
   --color-sparkle-old-secondary: #005fff;
 }
 
-/*
-  The default border color has changed to `currentcolor` in Tailwind CSS v4,
-  so we've added these compatibility styles to make sure everything still
-  looks the same as it did with Tailwind CSS v3.
-
-  If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
-*/
 @layer base {
   *,
   ::after,
@@ -46,122 +38,245 @@ layer(base);
 }
 
 @layer utilities {
-  /* ::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
-  }
-
-  ::-webkit-scrollbar-track {
-    background: var(--color-sparkle-text-muted);
-    border-radius: 5px;
-    transition: all 0.2s ease-in-out;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background: var(--color-sparkle-primary);
-    border-radius: 5px;
-    transition: all 0.2s ease-in-out;
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    background: var(--color-sparkle-secondary);
-  } */
-  .light {
-    --color-sparkle-bg: #f0f0f0;
-    --color-sparkle-text: #1e293b;
-    --color-sparkle-text-dark: #334155;
-    --color-sparkle-text-darker: #475569;
-    --color-sparkle-text-secondary: #64748b;
-    --color-sparkle-text-muted: #94a3b8;
-    --color-sparkle-card: #ffffff;
-    --color-sparkle-border: #d5dae2;
-    --color-sparkle-border-secondary: #cbd5e1;
-    --color-sparkle-primary: #3b82f6;
-    --color-sparkle-secondary: #2dac7d;
-    --color-sparkle-accent: #f1f5f9;
-  }
+  /* ═══════════════════════════════════════
+     THEME: OBSIDIAN GLOW
+     Deep blacks · Electric cyan · Soft violet
+     ═══════════════════════════════════════ */
 
   :root {
-    --color-sparkle-bg: #0c121f;
-    --color-sparkle-text: #f0f4f8;
-    --color-sparkle-text-dark: #d3dbe4;
-    --color-sparkle-text-darker: #aab4c3;
-    --color-sparkle-text-secondary: #7e92a9;
-    --color-sparkle-text-muted: #3b4658;
-    --color-sparkle-card: #131c2c;
-    --color-sparkle-border: #1f2a3d;
-    --color-sparkle-border-secondary: #212f44;
-    --color-sparkle-primary: #4f90e6;
-    --color-sparkle-secondary: #3db58a;
-    --color-sparkle-accent: #243144;
+    --color-sparkle-bg: #07080b;
+    --color-sparkle-text: #eeeef3;
+    --color-sparkle-text-dark: #c6c6d8;
+    --color-sparkle-text-darker: #9494ae;
+    --color-sparkle-text-secondary: #64647e;
+    --color-sparkle-text-muted: #282840;
+    --color-sparkle-card: #0c0d14;
+    --color-sparkle-border: #16182a;
+    --color-sparkle-border-secondary: #1e2140;
+    --color-sparkle-primary: #22d3ee;
+    --color-sparkle-secondary: #a78bfa;
+    --color-sparkle-accent: #111328;
+  }
+
+  .light {
+    --color-sparkle-bg: #f4f5fa;
+    --color-sparkle-text: #181830;
+    --color-sparkle-text-dark: #2a2a48;
+    --color-sparkle-text-darker: #484868;
+    --color-sparkle-text-secondary: #6c6c8a;
+    --color-sparkle-text-muted: #b4b4cc;
+    --color-sparkle-card: #ffffff;
+    --color-sparkle-border: #dcdcee;
+    --color-sparkle-border-secondary: #c8c8de;
+    --color-sparkle-primary: #0891b2;
+    --color-sparkle-secondary: #7c3aed;
+    --color-sparkle-accent: #ecedf6;
   }
 
   .purple {
-    --color-sparkle-bg: #120f1c;
-    --color-sparkle-text: #e3d8ff;
-    --color-sparkle-text-dark: #cbb8ff;
-    --color-sparkle-text-darker: #b199ff;
-    --color-sparkle-text-secondary: #9a85e8;
-    --color-sparkle-text-muted: #4a3a6b;
-    --color-sparkle-card: #1a1430;
-    --color-sparkle-border: #2f1b60;
-    --color-sparkle-border-secondary: #3a2178;
-    --color-sparkle-primary: #8e44ff;
-    --color-sparkle-secondary: #3463ff;
-    --color-sparkle-accent: #3b1673;
+    --color-sparkle-bg: #080618;
+    --color-sparkle-text: #e6ddff;
+    --color-sparkle-text-dark: #ccc0ee;
+    --color-sparkle-text-darker: #a898d8;
+    --color-sparkle-text-secondary: #7a6aa8;
+    --color-sparkle-text-muted: #362862;
+    --color-sparkle-card: #0e0b20;
+    --color-sparkle-border: #1c1640;
+    --color-sparkle-border-secondary: #281e58;
+    --color-sparkle-primary: #c084fc;
+    --color-sparkle-secondary: #f472b6;
+    --color-sparkle-accent: #161030;
   }
 
   .gray {
-    --color-sparkle-bg: #111214;
-    --color-sparkle-text: #f5f6fa;
-    --color-sparkle-text-dark: #e0e2e6;
-    --color-sparkle-text-darker: #c8ccd2;
-    --color-sparkle-text-secondary: #aeb3bb;
-    --color-sparkle-text-muted: #7a7f87;
-    --color-sparkle-card: #18191b;
-    --color-sparkle-border: #26272b;
-    --color-sparkle-border-secondary: #232426;
-    --color-sparkle-primary: #6366f1;
-    --color-sparkle-secondary: #b981f8;
-    --color-sparkle-accent: #232324;
+    --color-sparkle-bg: #090909;
+    --color-sparkle-text: #fafafa;
+    --color-sparkle-text-dark: #d0d0d0;
+    --color-sparkle-text-darker: #a0a0a0;
+    --color-sparkle-text-secondary: #6e6e6e;
+    --color-sparkle-text-muted: #3a3a3a;
+    --color-sparkle-card: #111111;
+    --color-sparkle-border: #1c1c1c;
+    --color-sparkle-border-secondary: #262626;
+    --color-sparkle-primary: #e4e4e7;
+    --color-sparkle-secondary: #a1a1aa;
+    --color-sparkle-accent: #181818;
   }
 
   .classic {
-    --color-sparkle-bg: #0f172a;
-    --color-sparkle-text: #ffffff;
-    --color-sparkle-text-dark: #e6e6e6;
-    --color-sparkle-text-darker: #cccccc;
-    --color-sparkle-text-secondary: #94a3b8;
-    --color-sparkle-text-muted: #475569;
-    --color-sparkle-card: #162033;
-    --color-sparkle-border: #253144;
-    --color-sparkle-border-secondary: #1e293b;
-    --color-sparkle-primary: #3b82f6;
-    --color-sparkle-secondary: #2dac7d;
-    --color-sparkle-accent: #2e394b;
+    --color-sparkle-bg: #0b1020;
+    --color-sparkle-text: #f8fafc;
+    --color-sparkle-text-dark: #dfe6f0;
+    --color-sparkle-text-darker: #b8c8dc;
+    --color-sparkle-text-secondary: #8898b4;
+    --color-sparkle-text-muted: #3e4e6a;
+    --color-sparkle-card: #101830;
+    --color-sparkle-border: #1a2848;
+    --color-sparkle-border-secondary: #223460;
+    --color-sparkle-primary: #38bdf8;
+    --color-sparkle-secondary: #34d399;
+    --color-sparkle-accent: #162040;
   }
+
+  /* Toast overrides */
   .Toastify__toast {
     background-color: var(--color-sparkle-card) !important;
     border: 1px solid var(--color-sparkle-border) !important;
     color: var(--color-sparkle-text) !important;
     --toastify-icon-color-success: var(--color-sparkle-secondary) !important;
+    backdrop-filter: blur(16px) saturate(1.4) !important;
+    font-family: "Outfit", sans-serif !important;
   }
   .Toastify__close-button {
     color: var(--color-sparkle-text-secondary) !important;
   }
 }
 
+/* ═══════ TYPOGRAPHY ═══════ */
 @layer base {
   html {
-    font-family: "Poppins", sans-serif;
+    font-family: "Outfit", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
 }
+
 @layer utilities {
   * {
     user-select: none;
   }
+  .font-mono {
+    font-family: "JetBrains Mono", monospace;
+  }
 }
 
+/* ═══════ GRAIN TEXTURE OVERLAY ═══════ */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.018;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 128px 128px;
+}
+
+/* ═══════ KEYFRAME ANIMATIONS ═══════ */
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes glow-pulse {
+  0%,
+  100% {
+    opacity: 0.4;
+    box-shadow: 0 0 8px -2px var(--color-sparkle-primary);
+  }
+  50% {
+    opacity: 1;
+    box-shadow: 0 0 16px -2px var(--color-sparkle-primary);
+  }
+}
+
+@keyframes gradient-flow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes subtle-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+/* ═══════ ANIMATION UTILITIES ═══════ */
+.animate-fade-slide-up {
+  animation: fadeSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.stagger-1 {
+  animation-delay: 0.04s;
+}
+.stagger-2 {
+  animation-delay: 0.08s;
+}
+.stagger-3 {
+  animation-delay: 0.12s;
+}
+.stagger-4 {
+  animation-delay: 0.16s;
+}
+.stagger-5 {
+  animation-delay: 0.2s;
+}
+.stagger-6 {
+  animation-delay: 0.24s;
+}
+
+/* ═══════ GLOW EFFECTS ═══════ */
+.glow-primary {
+  box-shadow: 0 0 24px -6px var(--color-sparkle-primary);
+}
+
+.glow-primary-sm {
+  box-shadow: 0 0 12px -3px var(--color-sparkle-primary);
+}
+
+.glow-secondary {
+  box-shadow: 0 0 24px -6px var(--color-sparkle-secondary);
+}
+
+/* ═══════ CUSTOM SCROLLBAR ═══════ */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-sparkle-border-secondary);
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-sparkle-primary);
+}
+
+/* ═══════ GLOBAL ═══════ */
 .recharts-line path {
   stroke: var(--color-sparkle-primary);
 }
@@ -172,5 +287,5 @@ button:focus {
 }
 
 body {
-  scrollbar-color: var(--color-sparkle-primary) var(--color-sparkle-bg);
+  scrollbar-color: var(--color-sparkle-border-secondary) transparent;
 }
